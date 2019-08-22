@@ -1,0 +1,1371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>Nipissis.kml</name>
+	<Style id="s_ylw-pushpin_hl">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Style id="s_ylw-pushpin">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<StyleMap id="m_ylw-pushpin">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#s_ylw-pushpin</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#s_ylw-pushpin_hl</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Folder>
+		<name>Nipissis</name>
+		<open>1</open>
+		<Placemark>
+			<name>Voie ferrée</name>
+			<styleUrl>#m_ylw-pushpin</styleUrl>
+			<LineString>
+				<tessellate>1</tessellate>
+				<coordinates>
+					-66.06447537335127,50.52348873846871,0 -66.0649934024287,50.52316519993774,0 -66.06527256109871,50.5228742177711,0 -66.06553526899469,50.52249650114709,0 -66.06578791661664,50.52213813785774,0 -66.06618026349027,50.52174839447949,0 -66.06651450403363,50.52146748319318,0 -66.06724940499487,50.52103135283374,0 -66.06772422075235,50.52068396819865,0 -66.06802460137021,50.52043731291857,0 -66.06835121986656,50.52004137728754,0 -66.06865558214255,50.51963703471869,0 -66.0690812255929,50.51906903518846,0 -66.06946172527439,50.51854545348996,0 -66.07087001099963,50.51667176854762,0 -66.07141757447275,50.51594512593746,0 -66.07174027253537,50.51557791756732,0 -66.071958242045,50.51533788503004,0 -66.07229814912628,50.51502006754237,0 -66.07276212960724,50.51463414712185,0 -66.07405187759531,50.51365299709723,0 -66.07533338081342,50.51269951592865,0 -66.07584089630095,50.51230360438529,0 -66.07649146602013,50.51174626102924,0 -66.0769433593415,50.51132017444574,0 -66.07726889009655,50.51093173539823,0 -66.07774219328635,50.51033221395715,0 -66.07816842577486,50.50965843251794,0 -66.07840124486312,50.50927685562542,0 -66.07859268944671,50.50889179221538,0 -66.0788045982292,50.5084865306718,0 -66.07907846992516,50.50803166706221,0 -66.07930402602406,50.50771689365327,0 -66.07952914135933,50.50737499963192,0 -66.07991466293124,50.50691357359023,0 -66.08028993816579,50.5065244484144,0 -66.0807155264024,50.50608994537525,0 -66.08152517719907,50.50525334158682,0 -66.08225976342099,50.50450214671293,0 -66.08290757877332,50.50384726986835,0 -66.0835543635953,50.50321212169193,0 -66.08388383944117,50.5028993559246,0 -66.08427096599029,50.50253982477027,0 -66.08466595622281,50.50214692662427,0 -66.08507329121035,50.50172101393382,0 -66.0853355296211,50.50146408393682,0 -66.08552694273844,50.50129015092281,0 -66.08572860416987,50.50113865085136,0 -66.08590431732429,50.50100967233575,0 -66.08617411092411,50.50086942231912,0 -66.08658638074137,50.50070240154529,0 -66.08702725803477,50.50054867950055,0 -66.08752480413496,50.50041449173158,0 -66.08803922938959,50.50030276222201,0 -66.08848263950321,50.50020704211622,0 -66.08888406211305,50.50009515458423,0 -66.08926322258985,50.49997224568105,0 -66.08970303963613,50.49979092752775,0 -66.08999840130572,50.49960400866834,0 -66.09028709689625,50.49936809696071,0 -66.09044782310835,50.49918339332332,0 -66.09135274893944,50.49792774599309,0 -66.09182214616915,50.49727994401037,0 -66.0924913303391,50.49642164013924,0 -66.0935103280537,50.49497418393397,0 -66.09412839869179,50.49412395197944,0 -66.09464528813743,50.49339441571627,0 -66.09509843610742,50.49275942539868,0 -66.09535532608143,50.4924999623203,0 -66.09562910250875,50.49225202264069,0 -66.09586178355687,50.49208541178862,0 -66.09623598250822,50.4918879481082,0 -66.09651340778974,50.49174996121045,0 -66.09683386401248,50.49157758580273,0 -66.09726076638283,50.49134581972687,0 -66.09784930910392,50.49101827359914,0 -66.10063301577615,50.48947354887641,0 
+				</coordinates>
+			</LineString>
+		</Placemark>
+		<Document>
+			<name>Site 1</name>
+			<open>1</open>
+			<snippet>Created jeu. août 8 13:14:25 2019</snippet>
+			<LookAt>
+				<gx:TimeSpan>
+					<begin>2019-08-05T20:15:29Z</begin>
+					<end>2019-08-06T14:34:04Z</end>
+				</gx:TimeSpan>
+				<longitude>-66.09719200000001</longitude>
+				<latitude>50.492433</latitude>
+				<altitude>0</altitude>
+				<heading>0</heading>
+				<tilt>0</tilt>
+				<range>1300</range>
+			</LookAt>
+			<StyleMap id="waypoint1">
+				<Pair>
+					<key>normal</key>
+					<styleUrl>#waypoint_n1</styleUrl>
+				</Pair>
+				<Pair>
+					<key>highlight</key>
+					<styleUrl>#waypoint_h1</styleUrl>
+				</Pair>
+			</StyleMap>
+			<Style id="waypoint_n1">
+				<IconStyle>
+					<Icon>
+						<href>http://maps.google.com/mapfiles/kml/pal4/icon61.png</href>
+					</Icon>
+				</IconStyle>
+			</Style>
+			<Style id="waypoint_h1">
+				<IconStyle>
+					<scale>1.2</scale>
+					<Icon>
+						<href>http://maps.google.com/mapfiles/kml/pal4/icon61.png</href>
+					</Icon>
+				</IconStyle>
+			</Style>
+			<Folder>
+				<name>Waypoints</name>
+				<Placemark>
+					<name>S1-G01</name>
+					<TimeStamp><when>2019-08-05T20:15:29Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096917,50.492368,52.49</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G02</name>
+					<TimeStamp><when>2019-08-05T20:16:16Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096864,50.49238099999999,33.25</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G03</name>
+					<TimeStamp><when>2019-08-05T20:16:52Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.09677600000001,50.492428,27.5</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G04</name>
+					<TimeStamp><when>2019-08-05T20:17:33Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096812,50.492372,28.32</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G05</name>
+					<TimeStamp><when>2019-08-05T20:18:03Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.09685399999999,50.492344,27.9</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G06</name>
+					<TimeStamp><when>2019-08-05T20:18:33Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096891,50.49232600000001,27.91</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G07</name>
+					<TimeStamp><when>2019-08-05T20:19:20Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096925,50.49232600000001,28.18</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G08</name>
+					<TimeStamp><when>2019-08-05T20:19:48Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.097005,50.492271,28.16</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G09</name>
+					<TimeStamp><when>2019-08-05T20:20:18Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.097081,50.49224100000001,27.54</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G10</name>
+					<TimeStamp><when>2019-08-05T20:20:49Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.097126,50.49222699999999,26.8</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G11</name>
+					<TimeStamp><when>2019-08-05T20:21:19Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.097179,50.492182,26.87</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G12</name>
+					<TimeStamp><when>2019-08-05T20:21:50Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.097224,50.492217,27.8</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G13</name>
+					<TimeStamp><when>2019-08-05T20:22:30Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.09727100000001,50.49230099999999,26.3</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G14</name>
+					<TimeStamp><when>2019-08-05T20:23:00Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.097302,50.49233700000001,28.04</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G15</name>
+					<TimeStamp><when>2019-08-05T20:23:28Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.097325,50.49235899999999,27.8</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G16</name>
+					<TimeStamp><when>2019-08-05T20:23:59Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.097385,50.492413,28.14</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G17</name>
+					<TimeStamp><when>2019-08-05T20:24:32Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.097435,50.49240799999999,28.12</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G18</name>
+					<TimeStamp><when>2019-08-05T20:25:01Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.09751199999999,50.49244,28.74</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G19</name>
+					<TimeStamp><when>2019-08-05T20:25:32Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.09754100000001,50.49248000000001,28.92</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G20</name>
+					<TimeStamp><when>2019-08-05T20:26:02Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.09757500000001,50.49252,29.29</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G21</name>
+					<TimeStamp><when>2019-08-05T20:26:34Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.09762000000001,50.492541,29.9</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G22</name>
+					<TimeStamp><when>2019-08-05T20:27:21Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.097661,50.492575,29.08</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G23</name>
+					<TimeStamp><when>2019-08-05T20:27:52Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.097701,50.492613,28.25</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-G24</name>
+					<TimeStamp><when>2019-08-05T20:28:31Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.09774299999999,50.49268299999999,28.12</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-H01</name>
+					<TimeStamp><when>2019-08-06T14:30:04Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096701,50.49232400000001,20.52</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-H02</name>
+					<TimeStamp><when>2019-08-06T14:30:16Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.09670699999999,50.492304,20.66</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-H03</name>
+					<TimeStamp><when>2019-08-06T14:30:25Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096705,50.49229799999999,21.6</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-H04</name>
+					<TimeStamp><when>2019-08-06T14:30:33Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096704,50.492305,23.36</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-H05</name>
+					<TimeStamp><when>2019-08-06T14:30:49Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096699,50.49227700000001,24.73</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-H06</name>
+					<TimeStamp><when>2019-08-06T14:31:27Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.09669700000001,50.492271,24.98</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-H07</name>
+					<TimeStamp><when>2019-08-06T14:31:57Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096676,50.49229,24.62</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-H08</name>
+					<TimeStamp><when>2019-08-06T14:32:28Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096671,50.49226300000001,24.62</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-H09</name>
+					<TimeStamp><when>2019-08-06T14:33:19Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096656,50.492264,24.89</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-H10</name>
+					<TimeStamp><when>2019-08-06T14:33:37Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096667,50.492271,24.83</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-H11</name>
+					<TimeStamp><when>2019-08-06T14:33:48Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.09665699999999,50.49226600000001,25.3</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S1-H12</name>
+					<TimeStamp><when>2019-08-06T14:34:04Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint1</styleUrl>
+					<Point>
+						<coordinates>-66.096642,50.49225200000001,24.46</coordinates>
+					</Point>
+				</Placemark>
+			</Folder>
+		</Document>
+		<Document>
+			<name>Site 2</name>
+			<snippet>Created jeu. août 8 13:14:27 2019</snippet>
+			<LookAt>
+				<gx:TimeSpan>
+					<begin>2019-08-07T19:16:38Z</begin>
+					<end>2019-08-07T19:25:11Z</end>
+				</gx:TimeSpan>
+				<longitude>-66.07942799999999</longitude>
+				<latitude>50.521087</latitude>
+				<altitude>0</altitude>
+				<heading>0</heading>
+				<tilt>0</tilt>
+				<range>1300</range>
+			</LookAt>
+			<Style id="waypoint_h2">
+				<IconStyle>
+					<scale>1.2</scale>
+					<Icon>
+						<href>http://maps.google.com/mapfiles/kml/pal4/icon61.png</href>
+					</Icon>
+				</IconStyle>
+			</Style>
+			<Style id="waypoint_n2">
+				<IconStyle>
+					<Icon>
+						<href>http://maps.google.com/mapfiles/kml/pal4/icon61.png</href>
+					</Icon>
+				</IconStyle>
+			</Style>
+			<StyleMap id="waypoint2">
+				<Pair>
+					<key>normal</key>
+					<styleUrl>#waypoint_n2</styleUrl>
+				</Pair>
+				<Pair>
+					<key>highlight</key>
+					<styleUrl>#waypoint_h2</styleUrl>
+				</Pair>
+			</StyleMap>
+			<Folder>
+				<name>Waypoints</name>
+				<Placemark>
+					<name>S2-G01</name>
+					<TimeStamp><when>2019-08-07T19:21:35Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.07982199999999,50.52125,35.94</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G02</name>
+					<TimeStamp><when>2019-08-07T19:21:44Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.07981599999999,50.521238,35.84</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G03</name>
+					<TimeStamp><when>2019-08-07T19:21:55Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.079748,50.52121200000001,35.63</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G04</name>
+					<TimeStamp><when>2019-08-07T19:22:04Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.079694,50.521191,35.36</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G05</name>
+					<TimeStamp><when>2019-08-07T19:22:12Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.079629,50.521158,35.24</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G06</name>
+					<TimeStamp><when>2019-08-07T19:22:25Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.07958000000001,50.521148,35.41</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G07</name>
+					<TimeStamp><when>2019-08-07T19:22:37Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.079522,50.521112,35.87</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G08</name>
+					<TimeStamp><when>2019-08-07T19:22:45Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.079464,50.521087,36.12</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G09</name>
+					<TimeStamp><when>2019-08-07T19:22:54Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.07940000000001,50.521061,36.13</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G10</name>
+					<TimeStamp><when>2019-08-07T19:23:04Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.079354,50.521037,36.07</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G11</name>
+					<TimeStamp><when>2019-08-07T19:23:13Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.07928800000001,50.52101,35.85</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G12</name>
+					<TimeStamp><when>2019-08-07T19:23:22Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.079224,50.52099500000001,36.11</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G13</name>
+					<TimeStamp><when>2019-08-07T19:23:31Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.079168,50.520962,34.93</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G14</name>
+					<TimeStamp><when>2019-08-07T19:23:47Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.079098,50.520966,36.24</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G15</name>
+					<TimeStamp><when>2019-08-07T19:23:55Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.07902,50.520947,35.93</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G16</name>
+					<TimeStamp><when>2019-08-07T19:24:04Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.078958,50.520931,36.24</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G17</name>
+					<TimeStamp><when>2019-08-07T19:24:13Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.07889299999999,50.520906,35.84</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G18</name>
+					<TimeStamp><when>2019-08-07T19:24:22Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.07881399999999,50.52087399999999,36.3</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G19</name>
+					<TimeStamp><when>2019-08-07T19:24:29Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.078761,50.520845,35.99</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G20</name>
+					<TimeStamp><when>2019-08-07T19:24:37Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.078709,50.52081700000001,36.18</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G21</name>
+					<TimeStamp><when>2019-08-07T19:24:45Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.07866,50.520791,36.36</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G22</name>
+					<TimeStamp><when>2019-08-07T19:24:54Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.078596,50.520772,36.28</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G23</name>
+					<TimeStamp><when>2019-08-07T19:25:02Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.078526,50.520746,36.57</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-G24</name>
+					<TimeStamp><when>2019-08-07T19:25:11Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.07849299999999,50.520702,36.51</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H01</name>
+					<TimeStamp><when>2019-08-07T19:16:38Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.08012100000001,50.521327,34.46</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H02</name>
+					<TimeStamp><when>2019-08-07T19:16:45Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080146,50.521327,35.64</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H03</name>
+					<TimeStamp><when>2019-08-07T19:16:51Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.08016000000001,50.521329,35.17</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H04</name>
+					<TimeStamp><when>2019-08-07T19:16:57Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080156,50.521354,35.64</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H05</name>
+					<TimeStamp><when>2019-08-07T19:17:02Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.08017599999999,50.521351,35.27</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H06</name>
+					<TimeStamp><when>2019-08-07T19:17:08Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080178,50.521354,35.27</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H07</name>
+					<TimeStamp><when>2019-08-07T19:17:13Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080185,50.52136900000001,34.93</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H08</name>
+					<TimeStamp><when>2019-08-07T19:17:18Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080189,50.521379,34.93</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H09</name>
+					<TimeStamp><when>2019-08-07T19:17:22Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080213,50.521382,34.73</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H10</name>
+					<TimeStamp><when>2019-08-07T19:17:27Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.08022200000001,50.52138999999999,34.98</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H11</name>
+					<TimeStamp><when>2019-08-07T19:17:33Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080229,50.521397,33.38</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H12</name>
+					<TimeStamp><when>2019-08-07T19:17:38Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080243,50.521408,32.91</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H13</name>
+					<TimeStamp><when>2019-08-07T19:17:44Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080257,50.521409,34.77</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H14</name>
+					<TimeStamp><when>2019-08-07T19:17:51Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.08025600000001,50.521406,34.94</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H15</name>
+					<TimeStamp><when>2019-08-07T19:17:57Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080274,50.521408,35.08</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H16</name>
+					<TimeStamp><when>2019-08-07T19:18:03Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.08027800000001,50.521416,34.62</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H17</name>
+					<TimeStamp><when>2019-08-07T19:18:14Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080296,50.52142,35.2</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H18</name>
+					<TimeStamp><when>2019-08-07T19:18:23Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080322,50.52142599999999,34.33</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H19</name>
+					<TimeStamp><when>2019-08-07T19:18:34Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080338,50.521428,33.08</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H20</name>
+					<TimeStamp><when>2019-08-07T19:18:45Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.08032799999999,50.521444,34.51</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H21</name>
+					<TimeStamp><when>2019-08-07T19:19:00Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080337,50.521457,34.38</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H22</name>
+					<TimeStamp><when>2019-08-07T19:19:09Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080337,50.521452,33.94</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H23</name>
+					<TimeStamp><when>2019-08-07T19:19:16Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.080347,50.52146199999999,34.05</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S2-H24</name>
+					<TimeStamp><when>2019-08-07T19:19:25Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint2</styleUrl>
+					<Point>
+						<coordinates>-66.08036199999999,50.521472,34.31</coordinates>
+					</Point>
+				</Placemark>
+			</Folder>
+		</Document>
+		<Document>
+			<name>Site 3</name>
+			<open>1</open>
+			<snippet>Created dim. août 11 12:55:28 2019</snippet>
+			<LookAt>
+				<gx:TimeSpan>
+					<begin>2019-08-10T15:05:09Z</begin>
+					<end>2019-08-10T15:32:23Z</end>
+				</gx:TimeSpan>
+				<longitude>-66.082182</longitude>
+				<latitude>50.514411</latitude>
+				<altitude>0</altitude>
+				<heading>0</heading>
+				<tilt>0</tilt>
+				<range>1300</range>
+			</LookAt>
+			<Style id="waypoint_n">
+				<IconStyle>
+					<Icon>
+						<href>http://maps.google.com/mapfiles/kml/pal4/icon61.png</href>
+					</Icon>
+				</IconStyle>
+			</Style>
+			<Style id="waypoint_h">
+				<IconStyle>
+					<scale>1.2</scale>
+					<Icon>
+						<href>http://maps.google.com/mapfiles/kml/pal4/icon61.png</href>
+					</Icon>
+				</IconStyle>
+			</Style>
+			<StyleMap id="waypoint">
+				<Pair>
+					<key>normal</key>
+					<styleUrl>#waypoint_n</styleUrl>
+				</Pair>
+				<Pair>
+					<key>highlight</key>
+					<styleUrl>#waypoint_h</styleUrl>
+				</Pair>
+			</StyleMap>
+			<Folder>
+				<name>Waypoints</name>
+				<open>1</open>
+				<Placemark>
+					<name>S3-G01</name>
+					<TimeStamp><when>2019-08-10T15:05:09Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08235999999999,50.514499,63.25</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G02</name>
+					<TimeStamp><when>2019-08-10T15:05:39Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08231600000001,50.514576,62.61</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G03</name>
+					<TimeStamp><when>2019-08-10T15:06:06Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082323,50.514596,61.66999999999999</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G04</name>
+					<TimeStamp><when>2019-08-10T15:06:29Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082324,50.514661,60.68</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G05</name>
+					<TimeStamp><when>2019-08-10T15:06:56Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08225299999999,50.51463499999999,61</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G06</name>
+					<TimeStamp><when>2019-08-10T15:07:19Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082255,50.51456399999999,60.97</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G07</name>
+					<TimeStamp><when>2019-08-10T15:07:46Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082329,50.514521,59.96</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G08</name>
+					<TimeStamp><when>2019-08-10T15:08:16Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082351,50.51449,59.18999999999999</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G09</name>
+					<TimeStamp><when>2019-08-10T15:08:38Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082308,50.514431,57.64999999999999</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G10</name>
+					<TimeStamp><when>2019-08-10T15:09:01Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08231499999999,50.51439700000001,57.68</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G11</name>
+					<TimeStamp><when>2019-08-10T15:09:24Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082227,50.514338,57.32</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G12</name>
+					<TimeStamp><when>2019-08-10T15:09:49Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082238,50.514321,56.21</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G13</name>
+					<TimeStamp><when>2019-08-10T15:10:16Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082115,50.514277,55.37</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G14</name>
+					<TimeStamp><when>2019-08-10T15:10:42Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082154,50.514288,54.8</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G15</name>
+					<TimeStamp><when>2019-08-10T15:11:06Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082053,50.514263,54.78</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G16</name>
+					<TimeStamp><when>2019-08-10T15:11:31Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08199999999999,50.514281,54.39</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G17</name>
+					<TimeStamp><when>2019-08-10T15:11:52Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08196700000001,50.514279,53.78</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G18</name>
+					<TimeStamp><when>2019-08-10T15:12:20Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.081942,50.514304,53.28999999999999</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G19</name>
+					<TimeStamp><when>2019-08-10T15:12:45Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08185400000001,50.51423200000001,53.71</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G20</name>
+					<TimeStamp><when>2019-08-10T15:13:23Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08174699999999,50.514189,52.96999999999999</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G21</name>
+					<TimeStamp><when>2019-08-10T15:13:52Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08167400000001,50.51417,53.06</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G22</name>
+					<TimeStamp><when>2019-08-10T15:14:19Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.081649,50.514178,52.71999999999999</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G23</name>
+					<TimeStamp><when>2019-08-10T15:14:49Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.081675,50.51416799999999,52.32999999999999</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-G24</name>
+					<TimeStamp><when>2019-08-10T15:15:15Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.081622,50.514162,52.66</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H01</name>
+					<TimeStamp><when>2019-08-10T15:24:53Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08260199999999,50.51443,46.86</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H02</name>
+					<TimeStamp><when>2019-08-10T15:25:05Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082596,50.514422,47.02999999999999</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H03</name>
+					<TimeStamp><when>2019-08-10T15:25:51Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08256799999999,50.514401,45.09</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H04</name>
+					<TimeStamp><when>2019-08-10T15:26:02Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08256900000001,50.51433900000001,45.59</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H05</name>
+					<TimeStamp><when>2019-08-10T15:26:18Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082617,50.514373,44.96</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H06</name>
+					<TimeStamp><when>2019-08-10T15:26:36Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082702,50.51441799999999,44.46</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H07</name>
+					<TimeStamp><when>2019-08-10T15:26:48Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082697,50.514416,44.5</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H08</name>
+					<TimeStamp><when>2019-08-10T15:27:30Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08274299999999,50.514402,44.67</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H09</name>
+					<TimeStamp><when>2019-08-10T15:28:24Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08268700000001,50.514451,43.07</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H10</name>
+					<TimeStamp><when>2019-08-10T15:29:15Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08266,50.514422,42.93</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H11</name>
+					<TimeStamp><when>2019-08-10T15:29:38Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082628,50.51441799999999,43.01</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H12</name>
+					<TimeStamp><when>2019-08-10T15:30:06Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08263599999999,50.51440699999999,41.9</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H13</name>
+					<TimeStamp><when>2019-08-10T15:30:20Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082671,50.51439700000001,43.02</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H14</name>
+					<TimeStamp><when>2019-08-10T15:30:35Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08268200000001,50.51439,43.03</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H15</name>
+					<TimeStamp><when>2019-08-10T15:30:51Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082667,50.51438499999999,42.48</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H16</name>
+					<TimeStamp><when>2019-08-10T15:31:03Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082668,50.514381,43.15</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H17</name>
+					<TimeStamp><when>2019-08-10T15:31:15Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08266500000001,50.514367,42.53</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H18</name>
+					<TimeStamp><when>2019-08-10T15:31:27Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082652,50.514357,42.66</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H19</name>
+					<TimeStamp><when>2019-08-10T15:31:38Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082666,50.514351,41.46</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H20</name>
+					<TimeStamp><when>2019-08-10T15:31:49Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082662,50.514349,42.2</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H21</name>
+					<TimeStamp><when>2019-08-10T15:31:58Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082635,50.514332,42.42</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H22</name>
+					<TimeStamp><when>2019-08-10T15:32:07Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082645,50.51431400000001,41.89</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H23</name>
+					<TimeStamp><when>2019-08-10T15:32:14Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.08264699999999,50.514312,42.17</coordinates>
+					</Point>
+				</Placemark>
+				<Placemark>
+					<name>S3-H24</name>
+					<TimeStamp><when>2019-08-10T15:32:23Z</when>
+</TimeStamp>
+					<styleUrl>#waypoint</styleUrl>
+					<Point>
+						<coordinates>-66.082646,50.51430300000001,42.67</coordinates>
+					</Point>
+				</Placemark>
+			</Folder>
+		</Document>
+	</Folder>
+</Document>
+</kml>
