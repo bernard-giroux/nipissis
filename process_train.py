@@ -8,7 +8,20 @@ from PIL import Image, ImageOps
 import pandas as pd
 import pytesseract
 
-PDF_PATH = "./trains.pdf"
+
+#  Notes sur les fichiers logs
+#
+#  La couleur des flèches indique si le train est
+#       - arrêté (rouge)
+#       - en marche (vert)
+#
+#  Dates d'arrivée à Yard (destination) ou Mai
+#       - estimée (italique bleu)
+#       - réelle (noir)
+#
+#  La distance à destination au nord semble être le mile 224
+#
+
 
 if os.name == 'nt':
     TESSERACT_PATH = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
