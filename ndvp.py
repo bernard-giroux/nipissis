@@ -1,0 +1,571 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import copy
+import datetime
+import glob
+import os
+import pickle
+import sys
+import numpy as np
+from scipy import signal
+import pandas as pd
+import matplotlib
+import obspy
+
+from PyQt5.QtGui import QIntValidator
+from PyQt5.QtWidgets import (QVBoxLayout, QCheckBox,
+                             QMainWindow, QApplication, QGroupBox,
+                             QLabel, QLineEdit, QComboBox,
+                             QGridLayout, QSizePolicy,
+                             QFrame, QMessageBox, QListWidget)
+from PyQt5.QtCore import Qt, QLocale
+
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as \
+    FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as \
+    NavigationToolbar
+
+import matplotlib.dates as mdates
+from matplotlib.figure import Figure
+
+from pandas.plotting import register_matplotlib_converters
+
+from common_nipissis import root_dir, sensitivity_g, sensitivity_h
+import warnings
+warnings.simplefilter("ignore")
+
+register_matplotlib_converters()
+
+# Make sure that we are using QT5
+matplotlib.use('Qt5Agg')
+
+locale = QLocale()
+
+
+class Site_rms:
+    def __init__(self, starttime_g, mE_g, starttime_h, mE_h):
+        self.mE_g = mE_g
+        self.mE_h = mE_h
+        self.starttime_g = [mdates.date2num(x) for x in starttime_g]
+        self.starttime_h = [mdates.date2num(x) for x in starttime_h]
+
+
+class MyMplCanvas(FigureCanvas):
+    """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
+    # from http://matplotlib.org/examples/user_interfaces/embedding_in_qt5.html
+
+    def __init__(self, parent=None, width=8, height=4, dpi=100):
+        self.fig = Figure(figsize=(width, height), dpi=dpi)
+
+        FigureCanvas.__init__(self, self.fig)
+        self.setParent(parent)
+
+        FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding,
+                                   QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+
+
+class Site_rms_canvas(MyMplCanvas):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.axe1 = self.fig.add_subplot(111)
+        self.axe2 = self.axe1.twinx()
+        self.l1 = None     # line of geophone data
+        self.l2 = None     # line of hydrophone data
+
+    def plot(self, x1, y1, x2, y2):
+        if self.l1 is None:
+            self.l1, = self.axe1.plot_date(x1, y1, 'o', c='C0')
+            self.l2, = self.axe2.plot_date(x2, y2, '*', c='C1')
+            self.axe1.set_yscale('log')
+            self.axe2.set_yscale('log')
+            self.axe1.set_ylabel('Mean RMS amplitude (mm/s)', color='C0')
+            self.axe2.set_ylabel('Mean RMS amplitude (Pa)', color='C1')
+            self.axe1.tick_params('y', colors='C0')
+            self.axe2.tick_params('y', colors='C1')
+            self.axe1.set_xlabel('Time')
+            self.axe1.legend((self.l1, self.l2), ('geophones', 'hydrophones'),
+                             bbox_to_anchor=(0., 1.02, 1., .102),
+                             loc='lower left', ncol=2)
+            self.fig.tight_layout()
+        else:
+            self.l1.set_data(x1, y1)
+            self.l2.set_data(x2, y2)
+            self.axe1.relim()
+            self.axe1.autoscale_view()
+            self.axe2.relim()
+            self.axe2.autoscale_view()
+
+        self.draw()
+
+
+class Data_plot_canvas(MyMplCanvas):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.axe1 = self.fig.add_subplot(121)
+        self.axeb = self.fig.add_subplot(122)
+        l, b, w, h = self.axe1.get_position().bounds
+        ll, bb, ww, hh = self.axeb.get_position().bounds
+        self.axe1.set_position([0.06, 0.15, 0.85, 0.77])
+        self.axeb.set_position([0.925, 0.15, 0.02, 0.77])
+        self.l1 = None
+        self.i1 = None
+        self.cbar = None
+
+    def plot_trace(self, trace, sensor):
+        self.axeb.set_visible(False)
+        t = trace.stats.delta * np.arange(trace.stats.npts)
+        if self.l1 is None:
+            self.axe1.clear()
+            self.l1, = self.axe1.plot(t, trace.data)
+            self.axe1.set_xscale('linear')
+            self.axe1.set_yscale('linear')
+            self.axe1.grid()
+        else:
+            self.l1.set_data(t, trace.data)
+            self.axe1.set_xscale('linear')
+            self.axe1.set_yscale('linear')
+            self.axe1.relim()
+            self.axe1.autoscale_view()
+        if sensor == 'Geophone':
+            self.axe1.set_ylabel('Amplitude (mm/s)')
+        else:
+            self.axe1.set_ylabel('Amplitude (Pa)')
+        self.axe1.set_xlabel('Time (s)')
+        self.axe1.set_position([0.06, 0.15, 0.9, 0.77])
+        self.axeb.set_position([0.925, 0.15, 0.02, 0.77])
+        self.draw()
+        self.i1 = None
+
+    def plot_spectrum(self, trace, sensor):
+        self.axeb.set_visible(False)
+        f, Pxx = signal.periodogram(trace.data, trace.stats.sampling_rate,
+                                    scaling='spectrum')
+        if self.l1 is None:
+            self.axe1.clear()
+            self.l1, = self.axe1.plot(f, np.sqrt(Pxx))
+            self.axe1.set_xscale('log')
+            self.axe1.set_yscale('log')
+        else:
+            self.l1.set_data(f, np.sqrt(Pxx))
+            self.axe1.set_xscale('log')
+            self.axe1.set_yscale('log')
+            self.axe1.relim()
+            self.axe1.autoscale_view()
+        if sensor == 'Geophone':
+            self.axe1.set_ylabel('Spectrum (mm/s RMS)')
+        else:
+            self.axe1.set_ylabel('Spectrum (Pa RMS)')
+        self.axe1.set_xlabel('Frequency (Hz)')
+        self.axe1.set_position([0.06, 0.15, 0.9, 0.77])
+        self.axeb.set_position([0.925, 0.15, 0.02, 0.77])
+        self.draw()
+        self.i1 = None
+
+    def plot_traces(self, traces, sensor):
+        t = traces[0].stats.delta * np.arange(traces[0].stats.npts)
+
+        data = np.empty((24, traces[0].stats.npts))
+        for n in range(24):
+            data[n, :] = traces[n].data
+        if self.i1 is None:
+            self.axe1.clear()
+        self.i1 = self.axe1.imshow(data, aspect='auto',
+                                   extent=(t[0], t[-1], 24, 1))
+        if self.cbar is None:
+            self.cbar = self.fig.colorbar(self.i1, ax=self.axe1,
+                                          cax=self.axeb,
+                                          use_gridspec=True)
+        else:
+            self.cbar.on_mappable_changed(self.i1)
+        self.axe1.set_xlabel('Time (s)')
+        self.axe1.set_ylabel('Trace no')
+        self.axe1.set_xscale('linear')
+        if sensor == 'Geophone':
+            self.cbar.set_label('Amplitude (mm/s)')
+        else:
+            self.cbar.set_label('Amplitude (Pa)')
+        self.axeb.set_visible(True)
+        self.axe1.set_position([0.06, 0.15, 0.85, 0.77])
+        self.axeb.set_position([0.925, 0.15, 0.02, 0.77])
+        self.draw()
+        self.l1 = None
+
+    def plot_spectra(self, traces, sensor):
+        f, Pxx = signal.periodogram(traces[0].data,
+                                    traces[0].stats.sampling_rate,
+                                    scaling='spectrum')
+        data = np.empty((24, Pxx.size))
+        data[0, :] = np.log10(Pxx)
+        for n in range(1, 24):
+            f, Pxx = signal.periodogram(traces[n].data,
+                                        traces[n].stats.sampling_rate,
+                                        scaling='spectrum')
+            data[n, :] = np.log10(Pxx)
+
+        if self.i1 is None:
+            self.axe1.clear()
+        self.i1 = self.axe1.imshow(data, aspect='auto',
+                                   extent=(f[0], f[-1], 24, 1))
+        if self.cbar is None:
+            self.cbar = self.fig.colorbar(self.i1, ax=self.axe1,
+                                          cax=self.axeb,
+                                          use_gridspec=True)
+        else:
+            self.cbar.on_mappable_changed(self.i1)
+        self.axe1.set_xlabel('Frequency (Hz)')
+        self.axe1.set_ylabel('Trace no')
+        self.axe1.set_xscale('log')
+        if sensor == 'Geophone':
+            self.cbar.set_label('log spectrum (mm/s RMS)')
+        else:
+            self.cbar.set_label('log spectrum (Pa RMS)')
+        self.axeb.set_visible(True)
+        self.axe1.set_position([0.06, 0.15, 0.85, 0.77])
+        self.axeb.set_position([0.925, 0.15, 0.02, 0.77])
+        self.draw()
+        self.l1 = None
+
+
+#
+# Main class
+#
+class PyNDVP(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+
+        self.site_rms = []
+        self.traces = None
+        self.load_data()
+        self.init_ui()
+
+        s = self.site_rms[0]
+        self.rms_plot.plot(s.starttime_g, s.mE_g, s.starttime_h, s.mE_h)
+        starttime = mdates.num2date(s.starttime_g[0])
+        self.startday.setText(str(starttime.day))
+        self.starthour.setText(str(starttime.hour))
+        self.startminute.setText(str(starttime.minute))
+        endtime = mdates.num2date(s.starttime_g[-1])
+        endtime = endtime.replace(minute=endtime.minute+1)
+
+        endtime = starttime + datetime.timedelta(minutes=10)
+        self.endday.setText(str(endtime.day))
+        self.endhour.setText(str(endtime.hour))
+        self.endminute.setText(str(endtime.minute))
+
+        files = self.get_file_list(starttime, endtime)
+        self.data_file.addItems(files)
+        self.get_traces()
+        self.data_plot.plot_trace(self.traces[self.channels.currentRow()],
+                                  self.type_sensor.currentText())
+
+    def init_ui(self):
+
+        self.site_no = QComboBox()
+        self.site_no.addItem('Site 1 - Fosse de l''Est')
+        self.site_no.addItem('Site 2 - Endicott')
+        self.site_no.addItem('Site 3')
+        self.site_no.currentIndexChanged.connect(self.change_site)
+
+        self.train_list = QComboBox()
+
+        self.passage_time = QLineEdit()
+        self.passage_time.setText('45')
+        self.passage_time.setValidator(QIntValidator())
+        self.passage_time.setMaximumWidth(120)
+
+        self.rms_plot = Site_rms_canvas()
+        toolbar = NavigationToolbar(self.rms_plot, self)
+
+        self.startday = QLineEdit()
+        self.startday.setValidator(QIntValidator())
+        self.startday.setMaximumWidth(40)
+        self.startday.textEdited.connect(self.start_end_changed)
+        self.starthour = QLineEdit()
+        self.starthour.setValidator(QIntValidator())
+        self.starthour.setMaximumWidth(40)
+        self.starthour.textEdited.connect(self.start_end_changed)
+        self.startminute = QLineEdit()
+        self.startminute.setValidator(QIntValidator())
+        self.startminute.setMaximumWidth(40)
+        self.startminute.textEdited.connect(self.start_end_changed)
+        self.endday = QLineEdit()
+        self.endday.setValidator(QIntValidator())
+        self.endday.setMaximumWidth(40)
+        self.endday.textEdited.connect(self.start_end_changed)
+        self.endhour = QLineEdit()
+        self.endhour.setValidator(QIntValidator())
+        self.endhour.setMaximumWidth(40)
+        self.endhour.textEdited.connect(self.start_end_changed)
+        self.endminute = QLineEdit()
+        self.endminute.setValidator(QIntValidator())
+        self.endminute.setMaximumWidth(40)
+        self.endminute.textEdited.connect(self.start_end_changed)
+
+        self.data_file = QComboBox()
+        self.data_file.setMinimumWidth(250)
+        self.data_file.currentIndexChanged.connect(self.file_changed)
+
+        self.channels = QListWidget()
+        for n in range(24):
+            self.channels.addItem(str(n+1))
+        # self.channels.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.channels.itemSelectionChanged.connect(self.update_data_plot)
+        self.channels.setMaximumWidth(40)
+        self.channels.setCurrentRow(0)
+        self.all_channels = QCheckBox('Show All Channels', self)
+        self.all_channels.stateChanged.connect(self.update_data_plot)
+        self.type_plot = QComboBox()
+        self.type_plot.addItem('Trace')
+        self.type_plot.addItem('Spectrum')
+        self.type_plot.currentIndexChanged.connect(self.update_data_plot)
+        self.type_sensor = QComboBox()
+        self.type_sensor.addItem('Geophone')
+        self.type_sensor.addItem('Hydrophone')
+        self.type_sensor.currentIndexChanged.connect(self.sensor_changed)
+
+        agb = QGroupBox('Data Selection')
+        gl = QGridLayout()
+        label = QLabel('Start day')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 0, 0)
+        gl.addWidget(self.startday, 0, 1)
+        label = QLabel('Start Hour')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 0, 2)
+        gl.addWidget(self.starthour, 0, 3)
+        label = QLabel('Start Minute')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 0, 4)
+        gl.addWidget(self.startminute, 0, 5)
+        label = QLabel('End day')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 1, 0)
+        gl.addWidget(self.endday, 1, 1)
+        label = QLabel('End Hour')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 1, 2)
+        gl.addWidget(self.endhour, 1, 3)
+        label = QLabel('End Minute')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 1, 4)
+        gl.addWidget(self.endminute, 1, 5)
+        label = QLabel('File')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 0, 6)
+        gl.addWidget(self.data_file, 0, 7)
+        label = QLabel('Channel')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 0, 8)
+        gl.addWidget(self.channels, 0, 9, 2, 1)
+        gl.addWidget(self.all_channels, 1, 10, 1, 2)
+        label = QLabel('Plot')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 0, 10)
+        gl.addWidget(self.type_plot, 0, 11)
+        label = QLabel('Sensor Type')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 0, 12)
+        gl.addWidget(self.type_sensor, 0, 13)
+        agb.setLayout(gl)
+
+        rgb = QGroupBox('Results')
+
+        self.data_plot = Data_plot_canvas()
+        toolbar2 = NavigationToolbar(self.data_plot, self)
+        vbox = QVBoxLayout()
+        vbox.addWidget(toolbar2)
+        vbox.addWidget(self.data_plot)
+        rgb.setLayout(vbox)
+
+        mw = QFrame()
+        self.setCentralWidget(mw)
+
+        gl = QGridLayout()
+        gl.addWidget(self.site_no, 0, 0)
+        label = QLabel('Train')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 0, 1)
+        gl.addWidget(self.train_list, 0, 2)
+        label = QLabel('Estimated passage time')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 0, 3)
+        gl.addWidget(self.passage_time, 0, 4)
+        gl.addWidget(toolbar, 1, 0, 1, 5)
+        gl.addWidget(self.rms_plot, 2, 0, 1, 5)
+        gl.addWidget(agb, 3, 0, 1, 5)
+        gl.addWidget(rgb, 4, 0, 1, 5)
+
+        mw.setLayout(gl)
+
+        self.setGeometry(50, 50, 1700, 1000)
+        self.setWindowTitle('Nipissis Data Viewing & Processing')
+        self.show()
+
+    def load_data(self):
+        self.trains = pd.read_pickle('./train_data.pkl')
+        with open('site1_rms.pkl', 'rb') as f:
+            self.site_rms.append(pickle.load(f))
+        with open('site2_rms.pkl', 'rb') as f:
+            self.site_rms.append(pickle.load(f))
+        with open('site3_rms.pkl', 'rb') as f:
+            self.site_rms.append(pickle.load(f))
+
+    def change_site(self):
+        s = self.site_rms[self.site_no.currentIndex()]
+        self.rms_plot.plot(s.starttime_g, s.mE_g, s.starttime_h, s.mE_h)
+
+        starttime = mdates.num2date(s.starttime_g[0])
+        self.startday.setText(str(starttime.day))
+        self.starthour.setText(str(starttime.hour))
+        self.startminute.setText(str(starttime.minute))
+        endtime = mdates.num2date(s.starttime_g[-1])
+        endtime = endtime.replace(minute=endtime.minute+1)
+
+        endtime = starttime + datetime.timedelta(minutes=10)
+        self.endday.setText(str(endtime.day))
+        self.endhour.setText(str(endtime.hour))
+        self.endminute.setText(str(endtime.minute))
+
+        files = self.get_file_list(starttime, endtime)
+        self.data_file.clear()
+        self.data_file.addItems(files)
+        self.get_traces()
+        self.update_data_plot()
+
+    def get_file_list(self, starttime, endtime):
+
+        site = self.site_no.currentIndex()+1
+        sensor = self.type_sensor.currentText()
+        msgBox = QMessageBox(self)
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setText('Getting list of data file, this may take some time')
+        msgBox.setWindowTitle('Message')
+        msgBox.setWindowModality(Qt.NonModal)
+        msgBox.exec()
+
+        if site == 1 or site == 2:  # Fosse de l'Est or Endicott
+            if sensor == 'Geophone':
+                prefix = 'g_2019-08-'
+            else:
+                prefix = 'h_2019-08-'
+        else:
+            prefix = 'gh_2019-08-'
+
+        files = []
+        prefix = root_dir+'site'+str(site)+'/'+prefix
+        time = copy.copy(starttime)
+        while time <= endtime:
+            tmp = prefix+'{0:02d}T{1:02d}-{2:02d}*'.format(time.day, time.hour,
+                                                           time.minute)
+            for f in sorted(glob.glob(tmp)):
+                fpath, fname = os.path.split(f)
+                files.append(fname)
+            time += datetime.timedelta(minutes=1)
+
+        return files
+
+    def get_traces(self):
+        site = self.site_no.currentIndex()+1
+        filename = root_dir+'site'+str(site)+'/'+self.data_file.currentText()
+        try:
+            self.traces = obspy.read(filename)
+        except OSError:
+            # get_traces may be called before the list of files is updated
+            return
+        ntraces = len(self.traces)
+        if site == 1 or site == 2:  # Fosse de l'Est or Endicott
+            if ntraces != 24:
+                print('\n\nWarning: only '+str(ntraces)+' in '+filename+'\n')
+            if self.type_sensor.currentText() == 'Geophone':
+                for nt in range(ntraces):
+                    tr = self.traces[nt]
+                    tr.data *= 1000.0 * tr.stats.calib / sensitivity_g[nt]
+            else:
+                for nt in range(ntraces):
+                    tr = self.traces[nt]
+                    tr.data *= tr.stats.calib / sensitivity_h[nt]
+        else:
+            if ntraces != 48:
+                print('\n\nWarning: only '+str(ntraces)+' in '+filename+'\n')
+            if self.type_sensor.currentText() == 'Geophone':
+                for nt in range(24):
+                    tr = self.traces[nt]
+                    tr.data *= 1000.0 * tr.stats.calib / sensitivity_g[nt]
+                self.traces = self.traces[:24]
+            else:
+                for nt in range(24):
+                    tr = self.traces[nt+24]
+                    tr.data *= tr.stats.calib / sensitivity_h[nt]
+                self.traces = self.traces[24:]
+
+    def update_data_plot(self):
+        if self.traces is None:
+            return
+        if self.all_channels.isChecked():
+            sensor = self.type_sensor.currentText()
+            if self.type_plot.currentIndex() == 0:  # trace
+                self.data_plot.plot_traces(self.traces, sensor)
+            else:
+                self.data_plot.plot_spectra(self.traces, sensor)
+        else:
+            tr_no = self.channels.currentRow()
+            sensor = self.type_sensor.currentText()
+            if self.type_plot.currentIndex() == 0:  # trace
+                self.data_plot.plot_trace(self.traces[tr_no], sensor)
+            else:
+                self.data_plot.plot_spectrum(self.traces[tr_no], sensor)
+
+    def sensor_changed(self):
+        starttime = datetime.datetime(2019, 8, int(self.startday.text()),
+                                      int(self.starthour.text()),
+                                      int(self.startminute.text()))
+        endtime = datetime.datetime(2019, 8, int(self.endday.text()),
+                                    int(self.endhour.text()),
+                                    int(self.endminute.text()))
+        files = self.get_file_list(starttime, endtime)
+        if len(files) == 0:
+            QMessageBox.warning(self, 'Warning',
+                                'No file found for selected period of time')
+            return
+        self.data_file.clear()
+        self.data_file.addItems(files)
+        self.get_traces()
+        self.update_data_plot()
+
+    def start_end_changed(self):
+        starttime = datetime.datetime(2019, 8, int(self.startday.text()),
+                                      int(self.starthour.text()),
+                                      int(self.startminute.text()))
+        endtime = datetime.datetime(2019, 8, int(self.endday.text()),
+                                    int(self.endhour.text()),
+                                    int(self.endminute.text()))
+        if starttime >= endtime:
+            QMessageBox.warning(self, 'Warning',
+                                'End time is earlier that start time')
+            return
+        files = self.get_file_list(starttime, endtime)
+        if len(files) == 0:
+            QMessageBox.warning(self, 'Warning',
+                                'No file found for selected period of time')
+            return
+        self.data_file.clear()
+        self.data_file.addItems(files)
+        self.get_traces()
+        self.update_data_plot()
+
+    def file_changed(self):
+        self.get_traces()
+        self.update_data_plot()
+
+
+if __name__ == '__main__':
+
+    app = QApplication(sys.argv)
+    ex = PyNDVP()
+
+    sys.exit(app.exec_())
