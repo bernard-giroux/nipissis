@@ -154,15 +154,15 @@ def get_train_data(images):
             continue
         if name[-1] == '.':
             name = name[:-1]
-            
+
         logdate = pytesseract.image_to_string(log_date, config='--psm 7')
 
         info = pytesseract.image_to_string(arrival, config='--psm 7')
         arrivals_re = r'(\d+\s+(.?ul|Aug)\s+\d+:\d+)'
         arrivals = re.findall(arrivals_re, info)
         if len(arrivals) == 0:
-            print(name, 'arrivals: ', info)
-            arrival.show()
+            # print(name, 'arrivals: ', info)
+            # arrival.show()
             continue
         if len(arrivals) == 2:
             mai = arrivals[0][0]
@@ -179,8 +179,8 @@ def get_train_data(images):
             mmc_re = r'((\d+\.\d+)|(\d+))\s+\|?\s*(\d+)'
             tmp = re.findall(mmc_re, info)
             if len(tmp) == 0:
-                print('\nmmc: ', name, info)
-                mmc.show()
+                # print('\nmmc: ', name, info)
+                # mmc.show()
                 continue
             else:
                 tmp = tmp[0]
@@ -270,15 +270,71 @@ def get_train_data2(lines, icons):
     return trains
 
 
+def manual_corrections(train_data):
+    train_data.loc[train_data.index == 3, 'Cars'] = 240
+    train_data.loc[train_data.index == 12, 'Cars'] = 11
+    train_data.loc[train_data.index == 18, ['Mileage', 'MPH', 'Cars']] = 39.9, 41, 50
+    train_data.loc[train_data.index == 36, ['Mileage', 'MPH', 'Cars']] = 32.7, 35, 42
+    train_data.loc[train_data.index == 39, ['Mileage', 'MPH', 'Cars']] = 186.7, 0, 160
+    train_data.loc[train_data.index == 51, ['Mileage', 'MPH', 'Cars']] = 149.1, 0, 42
+    train_data.loc[train_data.index == 54, ['Mileage', 'MPH', 'Cars']] = 12.0, 14, None
+    train_data.loc[train_data.index == 61, ['Mileage', 'MPH', 'Cars']] = 66.5, 18, 240
+    train_data.loc[train_data.index == 80, ['Mileage', 'MPH', 'Cars']] = 155.3, 15, 160
+    train_data.loc[train_data.index == 93, 'Cars'] = 163
+    train_data.loc[train_data.index == 97, ['Mileage', 'MPH', 'Cars']] = 30.7, 14, 164
+    train_data.loc[train_data.index == 100, ['Mileage', 'MPH', 'Cars']] = 77.9, 12, 163
+    train_data.loc[train_data.index == 111, ['Mileage', 'MPH', 'Cars']] = 45.2, 35, 240
+    train_data.loc[train_data.index == 112, 'Cars'] = 163
+    train_data.loc[train_data.index == 113, ['Mileage', 'MPH', 'Cars']] = 156.7, 15, 160
+    train_data.loc[train_data.index == 122, ['MPH', 'Cars']] = 0, 163
+    new_rows = [
+        ['PH0706C', 'southbound', 26.3, 27, 160, '05 Aug 08:35', '06 Aug 08:01', '2019-08-06 07:25:39'],
+        ['FCS0120X', 'southbound', 63.7, 26, 108, '06 Aug 18:56', '06 Aug 22:47', '2019-08-06 20:50:50'],
+        ['MS0022K', 'southbound', 169.4, 11, 163, '07 Aug 18:05', '07 Aug 23:05', '2019-08-07 16:35:47'],
+        ['PH0715S', 'southbound', 113.1, 34, 160, '07 Aug 20:01', '08 Aug 00:33', '2019-08-07 20:50:50'],
+        ['PH0716C', 'southbound', 70.3, 11, 160, '08 Aug 00:08', '08 Aug 09:28', '2019-08-08 07:25:39'],
+        ['PH0719B', 'southbound', 18.0, 15, 160, '08 Aug 15:47', '08 Aug 21:12', '2019-08-08 20:50:50'],
+        ['PH0720A', 'southbound', 13.6, 14, 160, '09 Aug 01:47', '09 Aug 07:29', '2019-08-09 07:25:39'],
+        ['PH0722D', 'southbound', 15.7, 0, 160, '09 Aug 06:02', '09 Aug 20:59', '2019-08-09 20:50:50'],
+        ['Ph0725R', 'southbound', 55.5, 0, 160, '10 Aug 03:11', '06 Aug 08:51', '2019-08-10 07:25:35'],
+        ['PH0726F', 'southbound', 75.0, 25, 160, '10 Aug 14:20', '10 Aug 18:55', '2019-08-10 16:40:43'],
+        ['PH0726F', 'southbound', 37.6, 15, 160, '10 Aug 14:20', '10 Aug 21:49', '2019-08-10 20:50:46'],
+        ['PH0728P', 'southbound', 78.7, 20, 160, '11 Aug 05:13', '11 Aug 09:48', '2019-08-11 07:25:35'],
+        ['A0016A', 'southbound', 154.4, 24, 124, '11 Aug 17:34', '11 Aug 22:40', '2019-08-11 16:40:42'],
+        ['MS0025K', 'southbound', 130.3, 15, 163, '11 Aug 20:53', '12 Aug 02:04', '2019-08-12 20:55:46'],
+    ]
+    for i, row in enumerate(new_rows):
+            columns = {
+                'Train': row[0],
+                'Direction': row[1],
+                'Mileage': row[2],
+                'MPH': row[3],
+                'Cars': row[4],
+                'Arrival Mai': row[5],
+                'Arrival Yard': row[6],
+                'Log Date': row[7],
+            }
+            new_rows[i] = columns
+    new_rows = pd.DataFrame(new_rows, columns=COLUMNS)
+
+    return train_data.append(new_rows, ignore_index=True)
+
+
 def main():
     images = get_images()
     train_data = get_train_data(images)
 
+    train_data['Train'] = train_data['Train'].str.upper()
+    train_data['Train'] = train_data['Train'].str.replace('O', '0')
+    train_data['Train'] = train_data['Train'].str.replace('I', '1')
+    train_data = manual_corrections(train_data)
+
     with pd.option_context(
                 'display.max_rows', None,
-                'display.max_columns', None
+                'display.max_columns', None,
             ):
         print(train_data)
+
     train_data.to_pickle('train_data.pkl')
 
 
