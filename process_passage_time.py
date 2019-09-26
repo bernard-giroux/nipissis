@@ -53,6 +53,7 @@ for n in range(trains.shape[0]):
         trains.loc[n, 'Log Date'] = datetime.datetime(2019, 8, day,
                                                       hour, minute)
 
+
 # %%
 #
 # Passage times at Mai that are earlier than log date are actual time (not
@@ -62,7 +63,7 @@ for n in range(trains.shape[0]):
 #        We should use entrye with mileage closest to the sites
 #        But before we must make sure it is the same trip!
 #
-        
+
 def get_passage_times(entry):
     sites = [None, None, None]
     direction = entry['Direction']
@@ -92,7 +93,7 @@ def get_passage_times(entry):
             for n in range(3):
                 dist = MILEAGE_SITES[n]
                 dt = dist / v
-                sites[n] = entry['Arrival Yard'] - datetime.timedelta(hours=dt)                
+                sites[n] = entry['Arrival Yard'] - datetime.timedelta(hours=dt)
     else:  # northbound
         if entry['Arrival Mai'] is not None and entry['Mileage'] > MILEAGE_MAI:
             # on a dépassé Mai, on utilise l'heure de passage à Mai
@@ -106,7 +107,7 @@ def get_passage_times(entry):
                 dt = dist / v
                 sites[n] = entry['Log Date'] - datetime.timedelta(hours=dt)
     return direction, cars, speed, sites
-    
+
 
 passage_times = pd.DataFrame(columns=COLUMNS)
 
@@ -140,4 +141,3 @@ with pd.option_context(
     print(passage_times)
 
 passage_times.to_pickle('passage_times.pkl')
-

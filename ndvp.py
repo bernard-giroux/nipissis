@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import copy
@@ -252,7 +252,7 @@ class PyNDVP(QMainWindow):
         endtime = mdates.num2date(s.starttime_g[-1])
         endtime = endtime.replace(minute=endtime.minute+1)
 
-        endtime = starttime + datetime.timedelta(minutes=10)
+#        endtime = starttime + datetime.timedelta(minutes=10)
         self.endday.setText(str(endtime.day))
         self.endhour.setText(str(endtime.hour))
         self.endminute.setText(str(endtime.minute))
@@ -272,6 +272,8 @@ class PyNDVP(QMainWindow):
         self.site_no.currentIndexChanged.connect(self.change_site)
 
         self.train_list = QComboBox()
+        for train in self.passage_times.loc[:, 'Train']:
+            self.train_list.addItem(train)
 
         self.passage_time = QLineEdit()
         self.passage_time.setText('45')
@@ -284,27 +286,27 @@ class PyNDVP(QMainWindow):
         self.startday = QLineEdit()
         self.startday.setValidator(QIntValidator())
         self.startday.setMaximumWidth(40)
-        self.startday.textEdited.connect(self.start_end_changed)
+        self.startday.editingFinished.connect(self.start_end_changed)
         self.starthour = QLineEdit()
         self.starthour.setValidator(QIntValidator())
         self.starthour.setMaximumWidth(40)
-        self.starthour.textEdited.connect(self.start_end_changed)
+        self.starthour.editingFinished.connect(self.start_end_changed)
         self.startminute = QLineEdit()
         self.startminute.setValidator(QIntValidator())
         self.startminute.setMaximumWidth(40)
-        self.startminute.textEdited.connect(self.start_end_changed)
+        self.startminute.editingFinished.connect(self.start_end_changed)
         self.endday = QLineEdit()
         self.endday.setValidator(QIntValidator())
         self.endday.setMaximumWidth(40)
-        self.endday.textEdited.connect(self.start_end_changed)
+        self.endday.editingFinished.connect(self.start_end_changed)
         self.endhour = QLineEdit()
         self.endhour.setValidator(QIntValidator())
         self.endhour.setMaximumWidth(40)
-        self.endhour.textEdited.connect(self.start_end_changed)
+        self.endhour.editingFinished.connect(self.start_end_changed)
         self.endminute = QLineEdit()
         self.endminute.setValidator(QIntValidator())
         self.endminute.setMaximumWidth(40)
-        self.endminute.textEdited.connect(self.start_end_changed)
+        self.endminute.editingFinished.connect(self.start_end_changed)
 
         self.data_file = QComboBox()
         self.data_file.setMinimumWidth(250)
@@ -408,6 +410,7 @@ class PyNDVP(QMainWindow):
 
     def load_data(self):
         self.trains = pd.read_pickle('./train_data.pkl')
+        self.passage_times = pd.read_pickle('./passage_times.pkl')
         with open('site1_rms.pkl', 'rb') as f:
             self.site_rms.append(pickle.load(f))
         with open('site2_rms.pkl', 'rb') as f:
@@ -426,7 +429,7 @@ class PyNDVP(QMainWindow):
         endtime = mdates.num2date(s.starttime_g[-1])
         endtime = endtime.replace(minute=endtime.minute+1)
 
-        endtime = starttime + datetime.timedelta(minutes=10)
+#        endtime = starttime + datetime.timedelta(minutes=10)
         self.endday.setText(str(endtime.day))
         self.endhour.setText(str(endtime.hour))
         self.endminute.setText(str(endtime.minute))
@@ -441,12 +444,12 @@ class PyNDVP(QMainWindow):
 
         site = self.site_no.currentIndex()+1
         sensor = self.type_sensor.currentText()
-        msgBox = QMessageBox(self)
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setText('Getting list of data file, this may take some time')
-        msgBox.setWindowTitle('Message')
-        msgBox.setWindowModality(Qt.NonModal)
-        msgBox.exec()
+#         msgBox = QMessageBox(self)
+#         msgBox.setIcon(QMessageBox.Information)
+#         msgBox.setText('Getting list of data file, this may take some time')
+#         msgBox.setWindowTitle('Message')
+#         msgBox.setWindowModality(Qt.NonModal)
+#         msgBox.exec()
 
         if site == 1 or site == 2:  # Fosse de l'Est or Endicott
             if sensor == 'Geophone':

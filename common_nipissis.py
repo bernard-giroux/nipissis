@@ -6,6 +6,8 @@ import numpy as np
 import socket
 if socket.gethostname() == 'harricana':
     root_dir = '/Volumes/Data4/nipissis/'
+elif 'saintemarguerite' in socket.gethostname():
+    root_dir = '/Volumes/Nipissis/'
 else:
     root_dir = '/Users/giroux/Desktop/nipissis/'
 
