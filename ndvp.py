@@ -463,8 +463,20 @@ class PyNDVP(QMainWindow):
             )
         else:
             passage_times = pd.read_pickle('./passage_times.pkl')
-            passage_times['passage_start'] = np.nan
-            passage_times['passage_end'] = np.nan
+            for i, s in enumerate(self.site_rms):
+                min_t = min(np.concatenate([s.starttime_g, s.starttime_h]))
+                max_t = max(np.concatenate([s.starttime_g, s.starttime_h]))
+
+                passage_site = passage_times[f'Site {i+1}']
+                passage_site_m = [mdates.date2num(p) for p in passage_site]
+                passage_site_m = np.array(passage_site_m)
+                mask_match = (min_t < passage_site_m) & (passage_site_m < max_t)
+                delta = pd.Timedelta(minutes=15)
+                passage_times.loc[mask_match, 'passage_start'] = \
+                    passage_site[mask_match] - delta
+                passage_times.loc[mask_match, 'passage_end'] = \
+                    passage_site[mask_match] + delta
+
         return passage_times
 
     def save_passage_times(self):
