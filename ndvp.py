@@ -81,13 +81,23 @@ class Site_rms_canvas(MyMplCanvas):
             self.l2, = self.axe2.plot_date(x2, y2, '*', c='C1')
             min_t = min(np.concatenate([x1, x2]))
             max_t = max(np.concatenate([x1, x2]))
-            for passage_time in passage_times[f'Site {site+1}']:
+            min_amp = min(np.concatenate([y1, y2]))
+            max_amp = max(np.concatenate([y1, y2]))
+            for train, passage_time in zip(
+                        passage_times['Train'],
+                        passage_times[f'Site {site+1}'],
+                    ):
                 if min_t < mdates.date2num(passage_time) < max_t:
-                    self.axe1.axvline(x=passage_time, c='r')
-                    delta = pd.Timedelta(minutes=30)
+                    delta = pd.Timedelta(minutes=15)
                     start, end = passage_time - delta, passage_time + delta
                     self.axe1.fill_betweenx(
-                        [-np.inf, np.inf], start, end, color='r', alpha=.2,
+                        [min_amp/1000, max_amp*1000],
+                        start,
+                        end,
+                        step='mid',
+                        color='r',
+                        alpha=.2,
+                    )
                     )
             self.axe1.set_yscale('log')
             self.axe2.set_yscale('log')
