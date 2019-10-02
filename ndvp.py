@@ -444,21 +444,28 @@ class PyNDVP(QMainWindow):
 
     def load_data(self):
         self.trains = pd.read_pickle('./train_data.pkl')
-        passage_times_files = os.listdir('./passage_times')
-        if passage_times_files:
-            passage_times_files = [
-                int(os.path.splitext(s)[0]) for s in passage_times_files
-            ]
-            pd.read_pickle(f'./passage_times/{max(passage_times_files)}.pkl')
-        else:
-            self.passage_times = pd.read_pickle('./passage_times.pkl')
-            self.passage_times['passage_start', 'passage_end'] = np.nan
         with open('site1_rms.pkl', 'rb') as f:
             self.site_rms.append(pickle.load(f))
         with open('site2_rms.pkl', 'rb') as f:
             self.site_rms.append(pickle.load(f))
         with open('site3_rms.pkl', 'rb') as f:
             self.site_rms.append(pickle.load(f))
+        self.passage_time = self.load_passage_times()
+
+    def load_passage_times(self):
+        passage_times_files = os.listdir('./passage_times')
+        if passage_times_files:
+            passage_times_files = [
+                int(os.path.splitext(s)[0]) for s in passage_times_files
+            ]
+            self.passage_times = pd.read_pickle(
+                f'./passage_times/{max(passage_times_files)}.pkl'
+            )
+        else:
+            passage_times = pd.read_pickle('./passage_times.pkl')
+            passage_times['passage_start'] = np.nan
+            passage_times['passage_end'] = np.nan
+        return passage_times
 
     def save_passage_times(self):
         passage_times_files = [
