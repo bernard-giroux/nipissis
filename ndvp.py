@@ -83,13 +83,13 @@ class Site_rms_canvas(MyMplCanvas):
             max_t = max(np.concatenate([x1, x2]))
             min_amp = min(np.concatenate([y1, y2]))
             max_amp = max(np.concatenate([y1, y2]))
-            for train, passage_time in zip(
+            for train, passage_time, start, end in zip(
                         passage_times['Train'],
                         passage_times[f'Site {site+1}'],
+                        passage_times['passage_start'],
+                        passage_times['passage_end'],
                     ):
                 if min_t < mdates.date2num(passage_time) < max_t:
-                    delta = pd.Timedelta(minutes=15)
-                    start, end = passage_time - delta, passage_time + delta
                     self.axe1.fill_betweenx(
                         [min_amp/1000, max_amp*1000],
                         start,
