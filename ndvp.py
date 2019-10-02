@@ -75,7 +75,8 @@ class Site_rms_canvas(MyMplCanvas):
         self.l1 = None     # line of geophone data
         self.l2 = None     # line of hydrophone data
 
-    def plot(self, x1, y1, x2, y2, passage_times, site):
+    def plot(self, x1, y1, x2, y2, passage_times):
+
         if self.l1 is None:
             self.l1, = self.axe1.plot_date(x1, y1, 'o', c='C0')
             self.l2, = self.axe2.plot_date(x2, y2, '*', c='C1')
@@ -98,33 +99,29 @@ class Site_rms_canvas(MyMplCanvas):
             self.axe2.relim()
             self.axe2.autoscale_view()
 
-        min_t = min(np.concatenate([x1, x2]))
-        max_t = max(np.concatenate([x1, x2]))
         min_amp = min(np.concatenate([y1, y2]))
         max_amp = max(np.concatenate([y1, y2]))
         for train, passage_time, start, end in zip(
                     passage_times['Train'],
-                    passage_times[f'Site {site+1}'],
                     passage_times['passage_start'],
                     passage_times['passage_end'],
                 ):
-            if min_t < mdates.date2num(passage_time) < max_t:
-                self.axe1.fill_betweenx(
-                    [min_amp/1000, max_amp*1000],
-                    start,
-                    end,
-                    step='mid',
-                    color='r',
-                    alpha=.2,
-                )
-                self.axe1.text(
-                    start,
-                    max_amp / 1000,
-                    train,
-                    rotation=90,
-                    horizontalalignment='right',
-                    verticalalignment='bottom',
-                )
+            self.axe1.fill_betweenx(
+                [min_amp/1000, max_amp*1000],
+                start,
+                end,
+                step='mid',
+                color='r',
+                alpha=.2,
+            )
+            self.axe1.text(
+                start,
+                max_amp / 1000,
+                train,
+                rotation=90,
+                horizontalalignment='right',
+                verticalalignment='bottom',
+            )
         self.draw()
 
 
