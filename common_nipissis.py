@@ -4,10 +4,13 @@
 import numpy as np
 
 import socket
+
 if socket.gethostname() == 'harricana':
     root_dir = '/Volumes/Data4/nipissis/'
 elif 'saintemarguerite' in socket.gethostname():
     root_dir = '/Volumes/Nipissis/'
+elif socket.gethostname() == 'LAPTOP-K01UUA9T':
+    root_dir = 'E:/nipissis/'
 else:
     root_dir = '/Users/giroux/Desktop/nipissis/'
 
