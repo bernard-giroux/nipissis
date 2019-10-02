@@ -99,6 +99,8 @@ class Site_rms_canvas(MyMplCanvas):
             self.axe2.relim()
             self.axe2.autoscale_view()
 
+        min_t = min(np.concatenate([x1, x2]))
+        max_t = max(np.concatenate([x1, x2]))
         min_amp = min(np.concatenate([y1, y2]))
         max_amp = max(np.concatenate([y1, y2]))
         for train, passage_time, start, end in zip(
@@ -106,22 +108,23 @@ class Site_rms_canvas(MyMplCanvas):
                     passage_times['passage_start'],
                     passage_times['passage_end'],
                 ):
-            self.axe1.fill_betweenx(
-                [min_amp/1000, max_amp*1000],
-                start,
-                end,
-                step='mid',
-                color='r',
-                alpha=.2,
-            )
-            self.axe1.text(
-                start,
-                max_amp / 1000,
-                train,
-                rotation=90,
-                horizontalalignment='right',
-                verticalalignment='bottom',
-            )
+            if min_t < start < max_t or min_t < end < max_t:
+                self.axe1.fill_betweenx(
+                    [min_amp/1000, max_amp*1000],
+                    start,
+                    end,
+                    step='mid',
+                    color='r',
+                    alpha=.2,
+                )
+                self.axe1.text(
+                    start,
+                    max_amp / 1000,
+                    train,
+                    rotation=90,
+                    horizontalalignment='right',
+                    verticalalignment='bottom',
+                )
         self.draw()
 
 
