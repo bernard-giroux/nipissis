@@ -98,6 +98,13 @@ class Site_rms_canvas(MyMplCanvas):
                         color='r',
                         alpha=.2,
                     )
+                    self.axe1.text(
+                        start,
+                        max_amp / 1000,
+                        train,
+                        rotation=90,
+                        horizontalalignment='right',
+                        verticalalignment='bottom',
                     )
             self.axe1.set_yscale('log')
             self.axe2.set_yscale('log')
