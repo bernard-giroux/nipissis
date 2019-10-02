@@ -450,7 +450,7 @@ class PyNDVP(QMainWindow):
             self.site_rms.append(pickle.load(f))
         with open('site3_rms.pkl', 'rb') as f:
             self.site_rms.append(pickle.load(f))
-        self.passage_time = self.load_passage_times()
+        self.passage_times = self.load_passage_times()
 
     def load_passage_times(self):
         passage_times_files = os.listdir('./passage_times')
