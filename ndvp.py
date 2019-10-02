@@ -75,10 +75,20 @@ class Site_rms_canvas(MyMplCanvas):
         self.l1 = None     # line of geophone data
         self.l2 = None     # line of hydrophone data
 
-    def plot(self, x1, y1, x2, y2):
+    def plot(self, x1, y1, x2, y2, passage_times, site):
         if self.l1 is None:
             self.l1, = self.axe1.plot_date(x1, y1, 'o', c='C0')
             self.l2, = self.axe2.plot_date(x2, y2, '*', c='C1')
+            min_t = min(np.concatenate([x1, x2]))
+            max_t = max(np.concatenate([x1, x2]))
+            for passage_time in passage_times[f'Site {site+1}']:
+                if min_t < mdates.date2num(passage_time) < max_t:
+                    self.axe1.axvline(x=passage_time, c='r')
+                    delta = pd.Timedelta(minutes=30)
+                    start, end = passage_time - delta, passage_time + delta
+                    self.axe1.fill_betweenx(
+                        [-np.inf, np.inf], start, end, color='r', alpha=.2,
+                    )
             self.axe1.set_yscale('log')
             self.axe2.set_yscale('log')
             self.axe1.set_ylabel('Mean RMS amplitude (mm/s)', color='C0')
@@ -244,7 +254,14 @@ class PyNDVP(QMainWindow):
         self.init_ui()
 
         s = self.site_rms[0]
-        self.rms_plot.plot(s.starttime_g, s.mE_g, s.starttime_h, s.mE_h)
+        self.rms_plot.plot(
+            s.starttime_g,
+            s.mE_g,
+            s.starttime_h,
+            s.mE_h,
+            self.passage_times,
+            self.site_no.currentIndex(),
+        )
         starttime = mdates.num2date(s.starttime_g[0])
         self.startday.setText(str(starttime.day))
         self.starthour.setText(str(starttime.hour))
@@ -420,7 +437,14 @@ class PyNDVP(QMainWindow):
 
     def change_site(self):
         s = self.site_rms[self.site_no.currentIndex()]
-        self.rms_plot.plot(s.starttime_g, s.mE_g, s.starttime_h, s.mE_h)
+        self.rms_plot.plot(
+            s.starttime_g,
+            s.mE_g,
+            s.starttime_h,
+            s.mE_h,
+            self.passage_times,
+            self.site_no.currentIndex(),
+        )
 
         starttime = mdates.num2date(s.starttime_g[0])
         self.startday.setText(str(starttime.day))
