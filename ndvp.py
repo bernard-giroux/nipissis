@@ -103,12 +103,16 @@ class Site_rms_canvas(MyMplCanvas):
         max_t = max(np.concatenate([x1, x2]))
         min_amp = min(np.concatenate([y1, y2]))
         max_amp = max(np.concatenate([y1, y2]))
-        for train, passage_time, start, end in zip(
+        for train, start, end in zip(
                     passage_times['Train'],
                     passage_times['passage_start'],
                     passage_times['passage_end'],
                 ):
-            if min_t < start < max_t or min_t < end < max_t:
+            must_be_plotted = not pd.isnull(start) and (
+                min_t < mdates.date2num(start) < max_t
+                or min_t < mdates.date2num(end) < max_t
+            )
+            if must_be_plotted:
                 self.axe1.fill_betweenx(
                     [min_amp/1000, max_amp*1000],
                     start,
@@ -277,7 +281,6 @@ class PyNDVP(QMainWindow):
             s.starttime_h,
             s.mE_h,
             self.passage_times,
-            self.site_no.currentIndex(),
         )
         starttime = mdates.num2date(s.starttime_g[0])
         self.startday.setText(str(starttime.day))
@@ -495,7 +498,6 @@ class PyNDVP(QMainWindow):
             s.starttime_h,
             s.mE_h,
             self.passage_times,
-            self.site_no.currentIndex(),
         )
 
         starttime = mdates.num2date(s.starttime_g[0])
