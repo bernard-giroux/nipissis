@@ -322,6 +322,7 @@ class PyNDVP(QMainWindow):
 
         self.rms_plot = Site_rms_canvas()
         toolbar = NavigationToolbar(self.rms_plot, self)
+        self.rms_plot.mpl_connect('button_press_event', self.handle_click)
 
         self.startday = QLineEdit()
         self.startday.setValidator(QIntValidator())
@@ -649,6 +650,14 @@ class PyNDVP(QMainWindow):
     def file_changed(self):
         self.get_traces()
         self.update_data_plot()
+
+    def handle_click(self, event):
+        new_value = event.xdata
+        train = self.train_list.currentText()
+        if event.button is matplotlib.backend_bases.MouseButton.LEFT:
+            self.modify_passage_time('passage_start', train, new_value)
+        elif event.button is matplotlib.backend_bases.MouseButton.RIGHT:
+            self.modify_passage_time('passage_end', train, new_value)
 
 
 if __name__ == '__main__':
