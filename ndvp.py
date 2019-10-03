@@ -12,6 +12,7 @@ from scipy import signal
 import pandas as pd
 import matplotlib
 import obspy
+from itertools import chain
 
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import (QVBoxLayout, QCheckBox,
@@ -74,6 +75,8 @@ class Site_rms_canvas(MyMplCanvas):
         self.axe2 = self.axe1.twinx()
         self.l1 = None     # line of geophone data
         self.l2 = None     # line of hydrophone data
+        self.fills = []
+        self.texts = []
 
     def plot(self, x1, y1, x2, y2, passage_times):
 
@@ -99,6 +102,10 @@ class Site_rms_canvas(MyMplCanvas):
             self.axe2.relim()
             self.axe2.autoscale_view()
 
+        for item in chain(self.fills, self.texts):
+            item.remove()
+        self.fills, self.texts = [], []
+
         min_t = min(np.concatenate([x1, x2]))
         max_t = max(np.concatenate([x1, x2]))
         min_amp = min(np.concatenate([y1, y2]))
@@ -113,7 +120,7 @@ class Site_rms_canvas(MyMplCanvas):
                 or min_t < mdates.date2num(end) < max_t
             )
             if must_be_plotted:
-                self.axe1.fill_betweenx(
+                fill = self.axe1.fill_betweenx(
                     [min_amp/1000, max_amp*1000],
                     start,
                     end,
@@ -121,7 +128,8 @@ class Site_rms_canvas(MyMplCanvas):
                     color='r',
                     alpha=.2,
                 )
-                self.axe1.text(
+                self.fills.append(fill)
+                text = self.axe1.text(
                     start,
                     max_amp / 1000,
                     train,
