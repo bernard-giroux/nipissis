@@ -713,7 +713,6 @@ class PyNDVP(QMainWindow):
             self.modify_passage_time('passage_end', train, new_value)
 
     def modify_passage_time(self, column, train, new_value):
-        print(column, train, new_value)
         if isinstance(new_value, str):
             new_value = mdates.datestr2num(new_value)
         if isinstance(new_value, float):
