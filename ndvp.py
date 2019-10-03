@@ -698,6 +698,25 @@ class PyNDVP(QMainWindow):
         elif event.button is matplotlib.backend_bases.MouseButton.RIGHT:
             self.modify_passage_time('passage_end', train, new_value)
 
+    def modify_passage_time(self, column, train, new_value):
+        print(column, train, new_value)
+        if isinstance(new_value, str):
+            new_value = mdates.datestr2num(new_value)
+        if isinstance(new_value, float):
+            new_value = mdates.num2date(new_value)
+        train_match = self.passage_times['Train'] == train
+        self.passage_times.loc[train_match, column] = new_value
+
+        s = self.site_rms[self.site_no.currentIndex()]
+        self.rms_plot.plot(
+            s.starttime_g,
+            s.mE_g,
+            s.starttime_h,
+            s.mE_h,
+            self.passage_times,
+        )
+        self.change_train()
+
 
 if __name__ == '__main__':
 
