@@ -129,6 +129,7 @@ class Site_rms_canvas(MyMplCanvas):
                     horizontalalignment='right',
                     verticalalignment='bottom',
                 )
+                self.texts.append(text)
         self.draw()
 
 
@@ -311,6 +312,7 @@ class PyNDVP(QMainWindow):
         self.train_list = QComboBox()
         for train in self.passage_times.loc[:, 'Train']:
             self.train_list.addItem(train)
+        self.train_list.currentTextChanged.connect(self.change_train)
 
         self.passage_start = QLineEdit()
         self.passage_start.setText('')
@@ -333,6 +335,8 @@ class PyNDVP(QMainWindow):
                 self.passage_start.text(),
             )
         )
+
+        self.change_train()
 
         self.rms_plot = Site_rms_canvas()
         toolbar = NavigationToolbar(self.rms_plot, self)
@@ -539,6 +543,19 @@ class PyNDVP(QMainWindow):
         self.data_file.addItems(files)
         self.get_traces()
         self.update_data_plot()
+
+    def change_train(self):
+        current_train = self.train_list.currentText()
+        train_match = self.passage_times['Train'].str.strip() == current_train
+        passages = (
+            self.passage_times.loc[
+                train_match,
+                ['passage_start', 'passage_end']
+            ]
+        )
+        [[start, end]] = passages.values
+        self.passage_start.setText(str(start))
+        self.passage_end.setText(str(end))
 
     def get_file_list(self, starttime, endtime):
 
