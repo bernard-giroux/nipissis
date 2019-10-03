@@ -500,7 +500,7 @@ class PyNDVP(QMainWindow):
             passage_times_files = [
                 int(os.path.splitext(s)[0]) for s in passage_times_files
             ]
-            self.passage_times = pd.read_pickle(
+            passage_times = pd.read_pickle(
                 f'./passage_times/{max(passage_times_files)}.pkl'
             )
         else:
@@ -525,8 +525,9 @@ class PyNDVP(QMainWindow):
         passage_times_files = [
             int(os.path.splitext(s)[0]) for s in os.listdir('./passage_times')
         ]
+        i = max(passage_times_files)+1 if passage_times_files else 0
         self.passage_times.to_pickle(
-            f'./passage_times/{max(passage_times_files)}.pkl'
+            f'./passage_times/{i}.pkl'
         )
 
     def change_site(self):
