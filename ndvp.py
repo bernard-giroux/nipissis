@@ -315,10 +315,24 @@ class PyNDVP(QMainWindow):
         self.passage_start = QLineEdit()
         self.passage_start.setText('')
         self.passage_start.setMaximumWidth(120)
+        self.passage_start.editingFinished.connect(
+            lambda: self.modify_passage_time(
+                'passage_start',
+                self.train_list.currentText(),
+                self.passage_start.text(),
+            )
+        )
 
         self.passage_end = QLineEdit()
         self.passage_end.setText('')
         self.passage_end.setMaximumWidth(120)
+        self.passage_start.editingFinished.connect(
+            lambda: self.modify_passage_time(
+                'passage_start',
+                self.train_list.currentText(),
+                self.passage_start.text(),
+            )
+        )
 
         self.rms_plot = Site_rms_canvas()
         toolbar = NavigationToolbar(self.rms_plot, self)
