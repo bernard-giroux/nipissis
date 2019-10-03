@@ -324,7 +324,7 @@ class PyNDVP(QMainWindow):
 
         self.passage_start = QLineEdit()
         self.passage_start.setText('')
-        self.passage_start.setMaximumWidth(120)
+        self.passage_start.setMaximumWidth(300)
         self.passage_start.editingFinished.connect(
             lambda: self.modify_passage_time(
                 'passage_start',
@@ -335,7 +335,7 @@ class PyNDVP(QMainWindow):
 
         self.passage_end = QLineEdit()
         self.passage_end.setText('')
-        self.passage_end.setMaximumWidth(120)
+        self.passage_end.setMaximumWidth(300)
         self.passage_start.editingFinished.connect(
             lambda: self.modify_passage_time(
                 'passage_start',
@@ -562,8 +562,17 @@ class PyNDVP(QMainWindow):
             ]
         )
         [[start, end]] = passages.values
-        self.passage_start.setText(str(start))
-        self.passage_end.setText(str(end))
+        start, end = str(start), str(end)
+        if '.' in start:
+            start = start.split('.')[0]
+        if '+' in start:
+            start = start.split('+')[0]
+        if '.' in end:
+            end = end.split('.')[0]
+        if '+' in start:
+            start = start.split('+')[0]
+        self.passage_start.setText(start)
+        self.passage_end.setText(end)
 
     def get_file_list(self, starttime, endtime):
 
