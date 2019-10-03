@@ -312,10 +312,13 @@ class PyNDVP(QMainWindow):
         for train in self.passage_times.loc[:, 'Train']:
             self.train_list.addItem(train)
 
-        self.passage_time = QLineEdit()
-        self.passage_time.setText('45')
-        self.passage_time.setValidator(QIntValidator())
-        self.passage_time.setMaximumWidth(120)
+        self.passage_start = QLineEdit()
+        self.passage_start.setText('')
+        self.passage_start.setMaximumWidth(120)
+
+        self.passage_end = QLineEdit()
+        self.passage_end.setText('')
+        self.passage_end.setMaximumWidth(120)
 
         self.rms_plot = Site_rms_canvas()
         toolbar = NavigationToolbar(self.rms_plot, self)
@@ -430,14 +433,18 @@ class PyNDVP(QMainWindow):
         label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
         gl.addWidget(label, 0, 1)
         gl.addWidget(self.train_list, 0, 2)
-        label = QLabel('Estimated passage time')
+        label = QLabel('Passage start')
         label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
         gl.addWidget(label, 0, 3)
-        gl.addWidget(self.passage_time, 0, 4)
-        gl.addWidget(toolbar, 1, 0, 1, 5)
-        gl.addWidget(self.rms_plot, 2, 0, 1, 5)
-        gl.addWidget(agb, 3, 0, 1, 5)
-        gl.addWidget(rgb, 4, 0, 1, 5)
+        gl.addWidget(self.passage_start, 0, 4)
+        label = QLabel('Passage end')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
+        gl.addWidget(label, 0, 5)
+        gl.addWidget(self.passage_end, 0, 6)
+        gl.addWidget(toolbar, 1, 0, 1, 7)
+        gl.addWidget(self.rms_plot, 2, 0, 1, 7)
+        gl.addWidget(agb, 3, 0, 1, 7)
+        gl.addWidget(rgb, 4, 0, 1, 7)
 
         mw.setLayout(gl)
 
