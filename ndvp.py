@@ -15,11 +15,11 @@ import obspy
 from itertools import chain
 
 from PyQt5.QtGui import QIntValidator
-from PyQt5.QtWidgets import (QVBoxLayout, QCheckBox,
-                             QMainWindow, QApplication, QGroupBox,
-                             QLabel, QLineEdit, QComboBox,
-                             QGridLayout, QSizePolicy,
-                             QFrame, QMessageBox, QListWidget)
+from PyQt5.QtWidgets import (
+    QVBoxLayout, QCheckBox, QMainWindow, QApplication, QGroupBox, QLabel,
+    QLineEdit, QComboBox, QGridLayout, QSizePolicy, QFrame, QMessageBox,
+    QListWidget, QPushButton,
+)
 from PyQt5.QtCore import Qt, QLocale
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as \
@@ -346,6 +346,10 @@ class PyNDVP(QMainWindow):
 
         self.change_train()
 
+        self.save_button = QPushButton()
+        self.save_button.setText("Save passage times")
+        self.save_button.clicked.connect(self.save_passage_times)
+
         self.rms_plot = Site_rms_canvas()
         toolbar = NavigationToolbar(self.rms_plot, self)
         self.rms_plot.mpl_connect('button_press_event', self.handle_click)
@@ -468,10 +472,11 @@ class PyNDVP(QMainWindow):
         label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
         gl.addWidget(label, 0, 5)
         gl.addWidget(self.passage_end, 0, 6)
-        gl.addWidget(toolbar, 1, 0, 1, 7)
-        gl.addWidget(self.rms_plot, 2, 0, 1, 7)
-        gl.addWidget(agb, 3, 0, 1, 7)
-        gl.addWidget(rgb, 4, 0, 1, 7)
+        gl.addWidget(self.save_button, 0, 7)
+        gl.addWidget(toolbar, 1, 0, 1, 8)
+        gl.addWidget(self.rms_plot, 2, 0, 1, 8)
+        gl.addWidget(agb, 3, 0, 1, 8)
+        gl.addWidget(rgb, 4, 0, 1, 8)
 
         mw.setLayout(gl)
 
