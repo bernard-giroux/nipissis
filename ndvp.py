@@ -584,12 +584,6 @@ class PyNDVP(QMainWindow):
 
         site = self.site_no.currentIndex()+1
         sensor = self.type_sensor.currentText()
-#         msgBox = QMessageBox(self)
-#         msgBox.setIcon(QMessageBox.Information)
-#         msgBox.setText('Getting list of data file, this may take some time')
-#         msgBox.setWindowTitle('Message')
-#         msgBox.setWindowModality(Qt.NonModal)
-#         msgBox.exec()
 
         if site == 1 or site == 2:  # Fosse de l'Est or Endicott
             if sensor == 'Geophone':
@@ -599,18 +593,26 @@ class PyNDVP(QMainWindow):
         else:
             prefix = 'gh_2019-08-'
 
-        files = []
-        prefix = root_dir+'site'+str(site)+'/'+prefix
-        time = copy.copy(starttime)
-        while time <= endtime:
-            tmp = prefix+'{0:02d}T{1:02d}-{2:02d}*'.format(time.day, time.hour,
-                                                           time.minute)
-            for f in sorted(glob.glob(tmp)):
-                fpath, fname = os.path.split(f)
-                files.append(fname)
-            time += datetime.timedelta(minutes=1)
+        files = os.listdir(root_dir+'site'+str(site))
+        files = np.array([f for f in files if prefix in f])
+        times = [
+            self.rreplace(
+                self.rreplace(
+                    f.lstrip('gh_').split('.')[0], '-', ':', 1,
+                ), '-', ':', 1,
+            )
+            for f in files
+        ]
+        times = [mdates.datestr2num(t) for t in times]
+        times = [mdates.num2date(t) for t in times]
+        times = np.array(times)
+        files = files[(starttime < times) & (times < endtime)]
 
         return files
+
+    def rreplace(self, s, old, new, occurrence):
+        li = s.rsplit(old, occurrence)
+        return new.join(li)
 
     def get_traces(self):
         site = self.site_no.currentIndex()+1
