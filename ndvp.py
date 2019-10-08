@@ -320,7 +320,9 @@ class PyNDVP(QMainWindow):
         self.train_list = QComboBox()
         for train in self.passage_times.loc[:, 'Train']:
             self.train_list.addItem(train)
-        self.train_list.currentTextChanged.connect(self.change_train)
+        self.train_list.currentTextChanged.connect(
+            lambda: (self.change_train(), self.start_end_changed())
+        )
 
         self.passage_start = QLineEdit()
         self.passage_start.setText('')
@@ -383,6 +385,9 @@ class PyNDVP(QMainWindow):
         self.data_file.setMinimumWidth(250)
         self.data_file.currentIndexChanged.connect(self.file_changed)
 
+        self.filter_by_train = QCheckBox()
+        self.filter_by_train.stateChanged.connect(self.start_end_changed)
+
         self.channels = QListWidget()
         for n in range(24):
             self.channels.addItem(str(n+1))
@@ -431,6 +436,10 @@ class PyNDVP(QMainWindow):
         label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
         gl.addWidget(label, 0, 6)
         gl.addWidget(self.data_file, 0, 7)
+        label = QLabel('Filter by selected train')
+        label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+        gl.addWidget(label, 1, 7)
+        gl.addWidget(self.filter_by_train, 1, 6)
         label = QLabel('Channel')
         label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
         gl.addWidget(label, 0, 8)
@@ -604,8 +613,10 @@ class PyNDVP(QMainWindow):
             for f in files
         ]
         times = [mdates.datestr2num(t) for t in times]
-        times = [mdates.num2date(t) for t in times]
+        times = [mdates.num2date(t).replace(tzinfo=None) for t in times]
         times = np.array(times)
+        starttime = starttime.replace(tzinfo=None)
+        endtime = endtime.replace(tzinfo=None)
         files = files[(starttime < times) & (times < endtime)]
 
         return files
@@ -666,12 +677,7 @@ class PyNDVP(QMainWindow):
                 self.data_plot.plot_spectrum(self.traces[tr_no], sensor)
 
     def sensor_changed(self):
-        starttime = datetime.datetime(2019, 8, int(self.startday.text()),
-                                      int(self.starthour.text()),
-                                      int(self.startminute.text()))
-        endtime = datetime.datetime(2019, 8, int(self.endday.text()),
-                                    int(self.endhour.text()),
-                                    int(self.endminute.text()))
+        starttime, endtime = self.fetch_start_end()
         files = self.get_file_list(starttime, endtime)
         if len(files) == 0:
             QMessageBox.warning(self, 'Warning',
@@ -683,12 +689,7 @@ class PyNDVP(QMainWindow):
         self.update_data_plot()
 
     def start_end_changed(self):
-        starttime = datetime.datetime(2019, 8, int(self.startday.text()),
-                                      int(self.starthour.text()),
-                                      int(self.startminute.text()))
-        endtime = datetime.datetime(2019, 8, int(self.endday.text()),
-                                    int(self.endhour.text()),
-                                    int(self.endminute.text()))
+        starttime, endtime = self.fetch_start_end()
         if starttime >= endtime:
             QMessageBox.warning(self, 'Warning',
                                 'End time is earlier that start time')
@@ -702,6 +703,27 @@ class PyNDVP(QMainWindow):
         self.data_file.addItems(files)
         self.get_traces()
         self.update_data_plot()
+
+    def fetch_start_end(self):
+        if not self.filter_by_train.checkState():
+            starttime = datetime.datetime(2019, 8, int(self.startday.text()),
+                                          int(self.starthour.text()),
+                                          int(self.startminute.text()))
+            endtime = datetime.datetime(2019, 8, int(self.endday.text()),
+                                        int(self.endhour.text()),
+                                        int(self.endminute.text()))
+        else:
+            train = self.train_list.currentText()
+            train_match = self.passage_times['Train'] == train
+            passages = self.passage_times.loc[
+                train_match,
+                ['passage_start', 'passage_end'],
+            ]
+            [starttime, endtime] = passages.iloc[0]
+        starttime = starttime.replace(tzinfo=None)
+        endtime = endtime.replace(tzinfo=None)
+
+        return starttime, endtime
 
     def file_changed(self):
         self.get_traces()
@@ -717,6 +739,8 @@ class PyNDVP(QMainWindow):
             self.modify_passage_time('passage_start', train, new_value)
         elif event.button is matplotlib.backend_bases.MouseButton.RIGHT:
             self.modify_passage_time('passage_end', train, new_value)
+
+        self.start_end_changed()
 
     def modify_passage_time(self, column, train, new_value):
         if isinstance(new_value, str):
