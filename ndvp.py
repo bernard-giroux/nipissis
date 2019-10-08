@@ -351,7 +351,7 @@ class PyNDVP(QMainWindow):
         self.save_button.clicked.connect(self.save_passage_times)
 
         self.rms_plot = Site_rms_canvas()
-        toolbar = NavigationToolbar(self.rms_plot, self)
+        self.toolbar = NavigationToolbar(self.rms_plot, self)
         self.rms_plot.mpl_connect('button_press_event', self.handle_click)
 
         self.startday = QLineEdit()
@@ -473,7 +473,7 @@ class PyNDVP(QMainWindow):
         gl.addWidget(label, 0, 5)
         gl.addWidget(self.passage_end, 0, 6)
         gl.addWidget(self.save_button, 0, 7)
-        gl.addWidget(toolbar, 1, 0, 1, 8)
+        gl.addWidget(self.toolbar, 1, 0, 1, 8)
         gl.addWidget(self.rms_plot, 2, 0, 1, 8)
         gl.addWidget(agb, 3, 0, 1, 8)
         gl.addWidget(rgb, 4, 0, 1, 8)
@@ -708,6 +708,9 @@ class PyNDVP(QMainWindow):
         self.update_data_plot()
 
     def handle_click(self, event):
+        if self.toolbar.mode:
+            return
+
         new_value = event.xdata
         train = self.train_list.currentText()
         if event.button is matplotlib.backend_bases.MouseButton.LEFT:
