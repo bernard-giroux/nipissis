@@ -115,22 +115,29 @@ class Site_rms_canvas(MyMplCanvas):
                     passage_times['passage_start'],
                     passage_times['passage_end'],
                 ):
-            must_be_plotted = not pd.isnull(start) and (
-                min_t < mdates.date2num(start) < max_t
-                or min_t < mdates.date2num(end) < max_t
+            must_be_plotted = (
+                not pd.isnull(start)
+                and not pd.isnull(end)
+                and start != 'nan'
+                and end != 'nan'
+                and (
+                    min_t < mdates.date2num(start) < max_t
+                    or min_t < mdates.date2num(end) < max_t
+                )
             )
             if must_be_plotted:
                 if train == current_train:
                     color = 'g'
                 else:
                     color = 'r'
+                alpha = .05 if '_' in train else .2
                 fill = self.axe1.fill_betweenx(
                     [min_amp/1000, max_amp*1000],
                     start,
                     end,
                     step='mid',
                     color=color,
-                    alpha=.2,
+                    alpha=alpha,
                 )
                 self.fills.append(fill)
                 text = self.axe1.text(
@@ -287,6 +294,7 @@ class PyNDVP(QMainWindow):
         self.load_data()
         self.init_ui()
         self.change_train()
+        self.manage_dummy_trains()
 
         s = self.site_rms[self.site_no.currentIndex()]
         starttime = mdates.num2date(s.starttime_g[0])
@@ -527,6 +535,7 @@ class PyNDVP(QMainWindow):
         return passage_times
 
     def save_passage_times(self):
+        self.manage_dummy_trains(remove_empty=True)
         passage_times_files = [
             int(os.path.splitext(s)[0]) for s in os.listdir('./passage_times')
         ]
@@ -749,6 +758,54 @@ class PyNDVP(QMainWindow):
         self.passage_times.loc[train_match, column] = new_value
 
         self.change_train()
+        self.manage_dummy_trains()
+
+    def manage_dummy_trains(self, data=None, remove_empty=False):
+        if data is None:
+            in_place = True
+            data = self.passage_times
+        else:
+            in_place = False
+
+        trains = data['Train']
+        dummies = trains[trains.str.contains('_')]
+        next_idx = len(dummies)
+
+        passages = data.loc[
+            data['Train'] == f'_ ({next_idx-1})',
+            ['passage_start', 'passage_end'],
+        ]
+        if len(passages) == 0:
+            start, end = 123, 123  # Allow creating a new dummy.
+        else:
+            [[start, end]] = passages.values
+        if pd.isnull(start) or pd.isnull(end) or start == 'nan' or end == 'nan':
+            if remove_empty:
+                data = data.iloc[
+                    data['Train'] != f'_ ({next_idx-1})'
+                ]
+        elif not remove_empty:
+            data = data.append(
+                pd.DataFrame(
+                    [[f'_ ({next_idx})', pd.NaT, pd.NaT]],
+                    columns=['Train', 'passage_start', 'passage_end'],
+                )
+            )
+
+        self.update_train_list(data['Train'])
+
+        if in_place:
+            self.passage_times = data
+        else:
+            return data
+
+    def update_train_list(self, train_list):
+        current_trains = [
+            self.train_list.itemText(i) for i in range(self.train_list.count())
+        ]
+        for train in train_list:
+            if train not in current_trains:
+                self.train_list.addItem(train)
 
 
 if __name__ == '__main__':
