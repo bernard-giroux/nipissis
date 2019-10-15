@@ -547,6 +547,7 @@ class PyNDVP(QMainWindow):
     def change_site(self):
         self.change_train()
 
+        s = self.site_rms[self.site_no.currentIndex()]
         starttime = mdates.num2date(s.starttime_g[0])
         self.startday.setText(str(starttime.day))
         self.starthour.setText(str(starttime.hour))
