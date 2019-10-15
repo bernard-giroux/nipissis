@@ -707,6 +707,7 @@ class PyNDVP(QMainWindow):
             QMessageBox.warning(self, 'Warning',
                                 'No file found for selected period of time')
             return
+        files.sort()
         self.data_file.clear()
         self.data_file.addItems(files)
         self.get_traces()
