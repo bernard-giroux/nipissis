@@ -78,7 +78,7 @@ class Site_rms_canvas(MyMplCanvas):
         self.fills = []
         self.texts = []
 
-    def plot(self, x1, y1, x2, y2, passage_times):
+    def plot(self, x1, y1, x2, y2, passage_times, current_train):
 
         if self.l1 is None:
             self.l1, = self.axe1.plot_date(x1, y1, 'o', c='C0')
@@ -120,18 +120,22 @@ class Site_rms_canvas(MyMplCanvas):
                 or min_t < mdates.date2num(end) < max_t
             )
             if must_be_plotted:
+                if train == current_train:
+                    color = 'g'
+                else:
+                    color = 'r'
                 fill = self.axe1.fill_betweenx(
                     [min_amp/1000, max_amp*1000],
                     start,
                     end,
                     step='mid',
-                    color='r',
+                    color=color,
                     alpha=.2,
                 )
                 self.fills.append(fill)
                 text = self.axe1.text(
                     start,
-                    max_amp / 1000,
+                    max_amp / 10,
                     train,
                     rotation=90,
                     horizontalalignment='right',
@@ -282,15 +286,9 @@ class PyNDVP(QMainWindow):
         self.traces = None
         self.load_data()
         self.init_ui()
+        self.change_train()
 
-        s = self.site_rms[0]
-        self.rms_plot.plot(
-            s.starttime_g,
-            s.mE_g,
-            s.starttime_h,
-            s.mE_h,
-            self.passage_times,
-        )
+        s = self.site_rms[self.site_no.currentIndex()]
         starttime = mdates.num2date(s.starttime_g[0])
         self.startday.setText(str(starttime.day))
         self.starthour.setText(str(starttime.hour))
@@ -345,8 +343,6 @@ class PyNDVP(QMainWindow):
                 self.passage_start.text(),
             )
         )
-
-        self.change_train()
 
         self.save_button = QPushButton()
         self.save_button.setText("Save passage times")
@@ -540,14 +536,7 @@ class PyNDVP(QMainWindow):
         )
 
     def change_site(self):
-        s = self.site_rms[self.site_no.currentIndex()]
-        self.rms_plot.plot(
-            s.starttime_g,
-            s.mE_g,
-            s.starttime_h,
-            s.mE_h,
-            self.passage_times,
-        )
+        self.change_train()
 
         starttime = mdates.num2date(s.starttime_g[0])
         self.startday.setText(str(starttime.day))
@@ -569,6 +558,15 @@ class PyNDVP(QMainWindow):
 
     def change_train(self):
         current_train = self.train_list.currentText()
+        s = self.site_rms[self.site_no.currentIndex()]
+        self.rms_plot.plot(
+            s.starttime_g,
+            s.mE_g,
+            s.starttime_h,
+            s.mE_h,
+            self.passage_times,
+            current_train,
+        )
         train_match = self.passage_times['Train'].str.strip() == current_train
         passages = (
             self.passage_times.loc[
@@ -750,14 +748,6 @@ class PyNDVP(QMainWindow):
         train_match = self.passage_times['Train'] == train
         self.passage_times.loc[train_match, column] = new_value
 
-        s = self.site_rms[self.site_no.currentIndex()]
-        self.rms_plot.plot(
-            s.starttime_g,
-            s.mE_g,
-            s.starttime_h,
-            s.mE_h,
-            self.passage_times,
-        )
         self.change_train()
 
 
