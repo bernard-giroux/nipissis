@@ -782,7 +782,7 @@ class PyNDVP(QMainWindow):
             [[start, end]] = passages.values
         if pd.isnull(start) or pd.isnull(end) or start == 'nan' or end == 'nan':
             if remove_empty:
-                data = data.iloc[
+                data = data.loc[
                     data['Train'] != f'_ ({next_idx-1})'
                 ]
         elif not remove_empty:
