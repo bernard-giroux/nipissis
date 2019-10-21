@@ -32,7 +32,7 @@ from matplotlib.figure import Figure
 
 from pandas.plotting import register_matplotlib_converters
 
-from common_nipissis import root_dir, sensitivity_g, sensitivity_h
+from common_nipissis import root_dir, sensitivity_g, sensitivity_h, integrate
 import warnings
 warnings.simplefilter("ignore")
 
@@ -215,6 +215,35 @@ class Data_plot_canvas(MyMplCanvas):
         self.axeb.set_position([0.925, 0.15, 0.02, 0.77])
         self.draw()
         self.i1 = None
+        
+    def plot_displacement(self, trace, sensor):
+        if sensor == 'Geophone':
+            y = integrate(trace.data, trace.stats.sampling_rate)
+        else:
+            y = np.zeros(trace.data.shape)
+        t = trace.stats.delta * np.arange(trace.stats.npts)
+        self.axeb.set_visible(False)
+        if self.l1 is None:
+            self.axe1.clear()
+            self.l1, = self.axe1.plot(t, y)
+            self.axe1.set_xscale('linear')
+            self.axe1.set_yscale('linear')
+            self.axe1.grid()
+        else:
+            self.l1.set_data(t, y)
+            self.axe1.set_xscale('linear')
+            self.axe1.set_yscale('linear')
+            self.axe1.relim()
+            self.axe1.autoscale_view()
+        if sensor == 'Geophone':
+            self.axe1.set_ylabel('Amplitude (mm)')
+        else:
+            self.axe1.set_ylabel('')
+        self.axe1.set_xlabel('Time (s)')
+        self.axe1.set_position([0.06, 0.15, 0.9, 0.77])
+        self.axeb.set_position([0.925, 0.15, 0.02, 0.77])
+        self.draw()
+        self.i1 = None
 
     def plot_traces(self, traces, sensor):
         t = traces[0].stats.delta * np.arange(traces[0].stats.npts)
@@ -280,7 +309,35 @@ class Data_plot_canvas(MyMplCanvas):
         self.draw()
         self.l1 = None
 
+    def plot_displacements(self, traces, sensor):
+        t = traces[0].stats.delta * np.arange(traces[0].stats.npts)
+        data = np.zeros((24, traces[0].stats.npts))
+        if sensor == 'Geophone':
+            for n in np.arange(24):
+                data[n,:] = integrate(traces[n].data, traces[n].stats.sampling_rate)
 
+        if self.i1 is None:
+            self.axe1.clear()
+        self.i1 = self.axe1.imshow(data, aspect='auto',
+                                   extent=(t[0], t[-1], 24, 1))
+        if self.cbar is None:
+            self.cbar = self.fig.colorbar(self.i1, ax=self.axe1,
+                                          cax=self.axeb,
+                                          use_gridspec=True)
+        else:
+            self.cbar.on_mappable_changed(self.i1)
+        self.axe1.set_xlabel('Time (s)')
+        self.axe1.set_ylabel('Trace no')
+        self.axe1.set_xscale('linear')
+        if sensor == 'Geophone':
+            self.cbar.set_label('Amplitude (mm)')
+        else:
+            self.cbar.set_label('')
+        self.axeb.set_visible(True)
+        self.axe1.set_position([0.06, 0.15, 0.85, 0.77])
+        self.axeb.set_position([0.925, 0.15, 0.02, 0.77])
+        self.draw()
+        self.l1 = None
 #
 # Main class
 #
@@ -304,7 +361,6 @@ class PyNDVP(QMainWindow):
         endtime = mdates.num2date(s.starttime_g[-1])
         endtime = endtime.replace(minute=endtime.minute+1)
 
-#        endtime = starttime + datetime.timedelta(minutes=10)
         self.endday.setText(str(endtime.day))
         self.endhour.setText(str(endtime.hour))
         self.endminute.setText(str(endtime.minute))
@@ -404,6 +460,7 @@ class PyNDVP(QMainWindow):
         self.type_plot = QComboBox()
         self.type_plot.addItem('Trace')
         self.type_plot.addItem('Spectrum')
+        self.type_plot.addItem('Displacement')
         self.type_plot.currentIndexChanged.connect(self.update_data_plot)
         self.type_sensor = QComboBox()
         self.type_sensor.addItem('Geophone')
@@ -674,15 +731,19 @@ class PyNDVP(QMainWindow):
             sensor = self.type_sensor.currentText()
             if self.type_plot.currentIndex() == 0:  # trace
                 self.data_plot.plot_traces(self.traces, sensor)
-            else:
+            elif self.type_plot.currentIndex() == 1:
                 self.data_plot.plot_spectra(self.traces, sensor)
+            else:
+                self.data_plot.plot_displacements(self.traces, sensor)
         else:
             tr_no = self.channels.currentRow()
             sensor = self.type_sensor.currentText()
             if self.type_plot.currentIndex() == 0:  # trace
                 self.data_plot.plot_trace(self.traces[tr_no], sensor)
-            else:
+            elif self.type_plot.currentIndex() == 1:
                 self.data_plot.plot_spectrum(self.traces[tr_no], sensor)
+            else:
+                self.data_plot.plot_displacement(self.traces[tr_no], sensor)
 
     def sensor_changed(self):
         starttime, endtime = self.fetch_start_end()
