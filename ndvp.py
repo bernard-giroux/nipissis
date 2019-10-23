@@ -18,7 +18,7 @@ from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import (
     QVBoxLayout, QCheckBox, QMainWindow, QApplication, QGroupBox, QLabel,
     QLineEdit, QComboBox, QGridLayout, QSizePolicy, QFrame, QMessageBox,
-    QListWidget, QPushButton, QFileDialog
+    QListWidget, QPushButton
 )
 from PyQt5.QtCore import Qt, QLocale
 
@@ -943,11 +943,8 @@ class PyNDVP(QMainWindow):
         fig.suptitle(self.site_no.currentText()+', Train: '+self.train_list.currentText())
         
         fig.tight_layout(rect=[0, 0.03, 1, 0.95])
-        
-        filename = QFileDialog.getSaveFileName(None, 'Save histograms', '', 'PDF (*.pdf);;PNG (*.png);;PS (*.ps);;SVG (*.svg)', '')
-        if len(filename[0]) == 0:
-            return
-        fig.savefig(filename[0])
+        fig.show()
+
 
 if __name__ == '__main__':
 
