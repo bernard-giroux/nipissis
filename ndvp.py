@@ -18,7 +18,7 @@ from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import (
     QVBoxLayout, QCheckBox, QMainWindow, QApplication, QGroupBox, QLabel,
     QLineEdit, QComboBox, QGridLayout, QSizePolicy, QFrame, QMessageBox,
-    QListWidget, QPushButton,
+    QListWidget, QPushButton, QFileDialog
 )
 from PyQt5.QtCore import Qt, QLocale
 
@@ -31,8 +31,10 @@ import matplotlib.dates as mdates
 from matplotlib.figure import Figure
 
 from pandas.plotting import register_matplotlib_converters
+import matplotlib.pyplot as plt
 
-from common_nipissis import root_dir, sensitivity_g, sensitivity_h, integrate
+
+from common_nipissis import root_dir, sensitivity_g, sensitivity_h, integrate, rms
 import warnings
 warnings.simplefilter("ignore")
 
@@ -374,7 +376,7 @@ class PyNDVP(QMainWindow):
     def init_ui(self):
 
         self.site_no = QComboBox()
-        self.site_no.addItem('Site 1 - Fosse de l''Est')
+        self.site_no.addItem('Site 1 - Fosse de l\'Est')
         self.site_no.addItem('Site 2 - Endicott')
         self.site_no.addItem('Site 3')
         self.site_no.currentIndexChanged.connect(self.change_site)
@@ -411,6 +413,10 @@ class PyNDVP(QMainWindow):
         self.save_button = QPushButton()
         self.save_button.setText("Save passage times")
         self.save_button.clicked.connect(self.save_passage_times)
+        
+        self.hist_button = QPushButton()
+        self.hist_button.setText('Histograms')
+        self.hist_button.clicked.connect(self.get_histograms)
 
         self.rms_plot = Site_rms_canvas()
         self.toolbar = NavigationToolbar(self.rms_plot, self)
@@ -542,11 +548,12 @@ class PyNDVP(QMainWindow):
         label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
         gl.addWidget(label, 0, 5)
         gl.addWidget(self.passage_end, 0, 6)
-        gl.addWidget(self.save_button, 0, 7)
-        gl.addWidget(self.toolbar, 1, 0, 1, 8)
-        gl.addWidget(self.rms_plot, 2, 0, 1, 8)
-        gl.addWidget(agb, 3, 0, 1, 8)
-        gl.addWidget(rgb, 4, 0, 1, 8)
+        gl.addWidget(self.hist_button, 0, 7)
+        gl.addWidget(self.save_button, 0, 8)
+        gl.addWidget(self.toolbar, 1, 0, 1, 9)
+        gl.addWidget(self.rms_plot, 2, 0, 1, 9)
+        gl.addWidget(agb, 3, 0, 1, 9)
+        gl.addWidget(rgb, 4, 0, 1, 9)
 
         mw.setLayout(gl)
 
@@ -774,15 +781,8 @@ class PyNDVP(QMainWindow):
         self.get_traces()
         self.update_data_plot()
 
-    def fetch_start_end(self):
-        if not self.filter_by_train.checkState():
-            starttime = datetime.datetime(2019, 8, int(self.startday.text()),
-                                          int(self.starthour.text()),
-                                          int(self.startminute.text()))
-            endtime = datetime.datetime(2019, 8, int(self.endday.text()),
-                                        int(self.endhour.text()),
-                                        int(self.endminute.text()))
-        else:
+    def fetch_start_end(self, by_train=False):
+        if self.filter_by_train.checkState() or by_train:
             train = self.train_list.currentText()
             train_match = self.passage_times['Train'] == train
             passages = self.passage_times.loc[
@@ -790,6 +790,13 @@ class PyNDVP(QMainWindow):
                 ['passage_start', 'passage_end'],
             ]
             [starttime, endtime] = passages.iloc[0]
+        else:
+            starttime = datetime.datetime(2019, 8, int(self.startday.text()),
+                                          int(self.starthour.text()),
+                                          int(self.startminute.text()))
+            endtime = datetime.datetime(2019, 8, int(self.endday.text()),
+                                        int(self.endhour.text()),
+                                        int(self.endminute.text()))
         starttime = starttime.replace(tzinfo=None)
         endtime = endtime.replace(tzinfo=None)
 
@@ -869,7 +876,78 @@ class PyNDVP(QMainWindow):
         for train in train_list:
             if train not in current_trains:
                 self.train_list.addItem(train)
+                
+    def get_histograms(self):
+        starttime, endtime = self.fetch_start_end(by_train=True)
+        files = self.get_file_list(starttime, endtime)
+        if len(files) == 0:
+            QMessageBox.warning(self, 'Warning',
+                                'No file found for selected period of time')
+            return
+        
+        # load in all data
+        all_traces = np.empty((0,),np.float32)
+        site = self.site_no.currentIndex()+1
+        for file in files:
+            filename = root_dir+'site'+str(site)+'/'+file
+            traces = obspy.read(filename)
+            
+            ntraces = len(traces)
+            if site == 1 or site == 2:  # Fosse de l'Est or Endicott
+                if ntraces != 24:
+                    print('\n\nWarning: only '+str(ntraces)+' in '+filename+'\n')
+                if self.type_sensor.currentText() == 'Geophone':
+                    for nt in range(ntraces):
+                        tr = traces[nt]
+                        tr.data *= 1000.0 * tr.stats.calib / sensitivity_g[nt]
+                        all_traces = np.append(all_traces, tr.data)
+                else:
+                    for nt in range(ntraces):
+                        tr = traces[nt]
+                        tr.data *= tr.stats.calib / sensitivity_h[nt]
+                        all_traces = np.append(all_traces, tr.data)
+            else:
+                if ntraces != 48:
+                    print('\n\nWarning: only '+str(ntraces)+' in '+filename+'\n')
+                if self.type_sensor.currentText() == 'Geophone':
+                    for nt in range(24):
+                        tr = traces[nt]
+                        tr.data *= 1000.0 * tr.stats.calib / sensitivity_g[nt]
+                        all_traces = np.append(all_traces, tr.data)
+                else:
+                    for nt in range(24):
+                        tr = traces[nt+24]
+                        tr.data *= tr.stats.calib / sensitivity_h[nt]
+                        all_traces = np.append(all_traces, tr.data)
+        
+        fig, ax = plt.subplots(1, 2, figsize=[8.4, 4.8])
+        ax[0].hist(all_traces, bins=30, log=True)
+        if self.type_sensor.currentText() == 'Geophone':
+            ax[0].set_xlabel('Particle Velocity (mm/s)')
+        else:
+            ax[0].set_xlabel('Pressure (Pa)')
+        ax[0].set_ylabel('Count')
+        
+        all_traces = all_traces.reshape((-1, tr.data.size))
+        rms_val = np.empty((all_traces.shape[0],))
+        for nt in np.arange(all_traces.shape[0]):
+            rms_val[nt] = rms(all_traces[nt,:])
+            
+        ax[1].hist(rms_val, bins=30, log=True)
+        if self.type_sensor.currentText() == 'Geophone':
+            ax[1].set_xlabel('RMS Trace Part. Vel. (mm/s)')
+        else:
+            ax[1].set_xlabel('RMS Trace Pressure (Pa)')
+        ax[1].set_ylabel('Count')
 
+        fig.suptitle(self.site_no.currentText()+', Train: '+self.train_list.currentText())
+        
+        fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+        
+        filename = QFileDialog.getSaveFileName(None, 'Save histograms', '', 'PDF (*.pdf);;PNG (*.png);;PS (*.ps);;SVG (*.svg)', '')
+        if len(filename[0]) == 0:
+            return
+        fig.savefig(filename[0])
 
 if __name__ == '__main__':
 
