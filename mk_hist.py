@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+from os import mkdir
+from os.path import exists
 import pickle
 
 import numpy as np
@@ -166,4 +168,6 @@ for ntr in range(71):
     fig.suptitle(sites[site]+', Train: '+train)
 
     fig.tight_layout(rect=[0, 0.03, 1, 0.95])
-    fig.savefig('../train_no{0:02d}.pdf'.format(ntr))
+    if not exists('histograms'):
+        mkdir('histograms')
+    fig.savefig('histograms/train_no{0:02d}.pdf'.format(ntr))
