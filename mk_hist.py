@@ -5,6 +5,7 @@ import os
 from os import mkdir
 from os.path import exists
 import pickle
+from scipy import signal
 
 import numpy as np
 import pandas as pd
@@ -17,9 +18,13 @@ from common_nipissis import root_dir, sensitivity_g, sensitivity_h, rms
 import warnings
 warnings.simplefilter("ignore")
 
+LEN_FILE = 16000
+
+
 def rreplace(s, old, new, occurrence):
     li = s.rsplit(old, occurrence)
     return new.join(li)
+
 
 class Site_rms:
     def __init__(self, starttime_g, mE_g, starttime_h, mE_h):
@@ -57,6 +62,21 @@ def get_file_list(starttime, endtime, site, sensor='Geophone'):
     files = files[(starttime < times) & (times < endtime)]
 
     return files
+
+
+def get_spectrum(traces, sample_rates):
+    f, Pxx = signal.periodogram(traces[0],
+                                sample_rates[0],
+                                scaling='spectrum')
+    data = np.empty((len(traces), Pxx.size))
+    data[0] = Pxx
+    for n in range(1, len(traces)):
+        f, Pxx = signal.periodogram(traces[n],
+                                    sample_rates[n],
+                                    scaling='spectrum')
+        data[n] = Pxx
+
+    return f, data
 
 
 sites = ('Site 1 - Fosse de l\'Est', 'Site 2 - Endicott', 'Site 3')
@@ -112,10 +132,14 @@ for ntr in range(71):
         site += 1
         files = get_file_list(starttime, endtime, site+1, sensor)
 
-    all_traces = np.empty((0,),np.float32)
-    for file in files:
         filename = root_dir+'site'+str(site+1)+'/'+file
+    all_traces = np.zeros((len(files), 48, LEN_FILE), np.float32)
+    all_sample_rates = np.zeros((len(files), 48), np.float32)
+    for i, file in enumerate(files):
         traces = obspy.read(filename)
+        all_sample_rates[i, 0:len(traces)] = [
+            tr.stats.sampling_rate for tr in traces
+        ]
 
         ntraces = len(traces)
         if site == 0 or site == 1:  # Fosse de l'Est or Endicott
@@ -125,12 +149,12 @@ for ntr in range(71):
                 for nt in range(ntraces):
                     tr = traces[nt]
                     tr.data *= 1000.0 * tr.stats.calib / sensitivity_g[nt]
-                    all_traces = np.append(all_traces, tr.data)
+                    all_traces[i, nt, :] = tr.data
             else:
                 for nt in range(ntraces):
                     tr = traces[nt]
                     tr.data *= tr.stats.calib / sensitivity_h[nt]
-                    all_traces = np.append(all_traces, tr.data)
+                    all_traces[i, nt, :] = tr.data
         else:
             if ntraces != 48:
                 print('\nWarning: only '+str(ntraces)+' in '+filename+'\n')
@@ -138,32 +162,59 @@ for ntr in range(71):
                 for nt in range(24):
                     tr = traces[nt]
                     tr.data *= 1000.0 * tr.stats.calib / sensitivity_g[nt]
-                    all_traces = np.append(all_traces, tr.data)
+                    all_traces[i, nt, :] = tr.data
             else:
                 for nt in range(24):
                     tr = traces[nt+24]
                     tr.data *= tr.stats.calib / sensitivity_h[nt]
-                    all_traces = np.append(all_traces, tr.data)
+                    all_traces[i, nt, :] = tr.data
 
-    fig, ax = plt.subplots(1, 2, figsize=[8.4, 4.8])
-    ax[0].hist(all_traces, bins=30, log=True)
+    all_traces = all_traces.reshape([-1, LEN_FILE])
+    all_sample_rates = all_sample_rates.flatten()
+    mask = np.any(all_traces != 0, axis=1)
+    all_traces, all_sample_rates = all_traces[mask], all_sample_rates[mask]
+
+    fig, ax = plt.subplots(2, 2, figsize=[8.4, 4.8])
+    ax[0, 0].hist(all_traces.flatten(), bins=30, log=True, histtype='stepfilled')
     if sensor == 'Geophone':
-        ax[0].set_xlabel('Particle Velocity (mm/s)')
+        ax[0, 0].set_xlabel('Particle Velocity (mm/s)')
     else:
-        ax[0].set_xlabel('Pressure (Pa)')
-    ax[0].set_ylabel('Count')
+        ax[0, 0].set_xlabel('Pressure (Pa)')
+    ax[0, 0].set_ylabel('Count')
 
-    all_traces = all_traces.reshape((-1, tr.data.size))
     rms_val = np.empty((all_traces.shape[0],))
     for nt in np.arange(all_traces.shape[0]):
-        rms_val[nt] = rms(all_traces[nt,:])
+        rms_val[nt] = rms(all_traces[nt, :])
 
-    ax[1].hist(rms_val, bins=30, log=True)
+    ax[0, 1].hist(rms_val, bins=30, log=True, histtype='stepfilled')
     if sensor == 'Geophone':
-        ax[1].set_xlabel('RMS Trace Part. Vel. (mm/s)')
+        ax[0, 1].set_xlabel('RMS Trace Part. Vel. (mm/s)')
     else:
-        ax[1].set_xlabel('RMS Trace Pressure (Pa)')
-    ax[1].set_ylabel('Count')
+        ax[0, 1].set_xlabel('RMS Trace Pressure (Pa)')
+    ax[0, 1].set_ylabel('Count')
+
+    f, spectra = get_spectrum(all_traces, all_sample_rates)
+
+    ax[1, 0].plot(f, spectra.mean(axis=0))
+    ax[1, 0].set_xscale('log')
+    ax[1, 0].set_yscale('log')
+    if sensor == 'Geophone':
+        ax[1, 0].set_ylabel('Spectrum (mm/s RMS)')
+    else:
+        ax[1, 0].set_ylabel('Spectrum (Pa RMS)')
+    ax[1, 0].set_xlabel('Frequency (Hz)')
+    ax[1, 0].set_title('Spectre moyen')
+
+    spectrum = spectra[np.argmax(rms_val)]
+    ax[1, 1].plot(f, spectrum)
+    ax[1, 1].set_xscale('log')
+    ax[1, 1].set_yscale('log')
+    if sensor == 'Geophone':
+        ax[1, 1].set_ylabel('Spectrum (mm/s RMS)')
+    else:
+        ax[1, 1].set_ylabel('Spectrum (Pa RMS)')
+    ax[1, 1].set_xlabel('Frequency (Hz)')
+    ax[1, 1].set_title('Fichier de plus grande amplitude RMS')
 
     fig.suptitle(sites[site]+', Train: '+train)
 
