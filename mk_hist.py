@@ -117,7 +117,7 @@ else:
 
 site = 0
 sensor = 'Geophone'
-for ntr in range(71):
+for ntr in range(70):
     train = '_ ('+str(ntr)+')'
     print('Je traite le train {0:02d}'.format(ntr))
     train_match = passage_times['Train'] == train
@@ -132,16 +132,18 @@ for ntr in range(71):
         site += 1
         files = get_file_list(starttime, endtime, site+1, sensor)
 
-        filename = root_dir+'site'+str(site+1)+'/'+file
-    all_traces = np.zeros((len(files), 48, LEN_FILE), np.float32)
-    all_sample_rates = np.zeros((len(files), 48), np.float32)
     for i, file in enumerate(files):
+        filename = root_dir+'site'+str(site+1)+'/'+file
         traces = obspy.read(filename)
+        ntraces = len(traces)
+        if i == 0:
+            all_traces = np.zeros((len(files), ntraces, traces[0].data.size), np.float32)
+            all_sample_rates = np.zeros((len(files), ntraces), np.float32)
+
         all_sample_rates[i, 0:len(traces)] = [
             tr.stats.sampling_rate for tr in traces
         ]
 
-        ntraces = len(traces)
         if site == 0 or site == 1:  # Fosse de l'Est or Endicott
             if ntraces != 24:
                 print('\nWarning: only '+str(ntraces)+' in '+filename+'\n')
@@ -169,12 +171,12 @@ for ntr in range(71):
                     tr.data *= tr.stats.calib / sensitivity_h[nt]
                     all_traces[i, nt, :] = tr.data
 
-    all_traces = all_traces.reshape([-1, LEN_FILE])
+    all_traces = all_traces.reshape([-1, tr.data.size])
     all_sample_rates = all_sample_rates.flatten()
     mask = np.any(all_traces != 0, axis=1)
     all_traces, all_sample_rates = all_traces[mask], all_sample_rates[mask]
 
-    fig, ax = plt.subplots(2, 2, figsize=[8.4, 4.8])
+    fig, ax = plt.subplots(2, 2, figsize=[8.4, 6.8])
     ax[0, 0].hist(all_traces.flatten(), bins=30, log=True, histtype='stepfilled')
     if sensor == 'Geophone':
         ax[0, 0].set_xlabel('Particle Velocity (mm/s)')
