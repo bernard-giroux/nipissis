@@ -201,22 +201,30 @@ for ntr in range(70):
     ax[1, 0].set_xscale('log')
     ax[1, 0].set_yscale('log')
     if sensor == 'Geophone':
-        ax[1, 0].set_ylabel('Spectrum (mm/s RMS)')
+        ax[1, 0].set_ylabel('Amplitude (mm/s RMS)')
     else:
-        ax[1, 0].set_ylabel('Spectrum (Pa RMS)')
+        ax[1, 0].set_ylabel('Amplitude (Pa RMS)')
     ax[1, 0].set_xlabel('Frequency (Hz)')
     ax[1, 0].set_title('Spectre moyen')
 
-    spectrum = spectra[np.argmax(rms_val)]
-    ax[1, 1].plot(f, spectrum)
-    ax[1, 1].set_xscale('log')
-    ax[1, 1].set_yscale('log')
-    if sensor == 'Geophone':
-        ax[1, 1].set_ylabel('Spectrum (mm/s RMS)')
-    else:
-        ax[1, 1].set_ylabel('Spectrum (Pa RMS)')
-    ax[1, 1].set_xlabel('Frequency (Hz)')
-    ax[1, 1].set_title('Fichier de plus grande amplitude RMS')
+    f_E_max = np.empty((spectra.shape[0],))
+    for ns in np.arange(f_E_max.size):
+        f_E_max[ns] = f[np.argmax(spectra[ns,:])]
+
+    ax[1, 1].hist(f_E_max, bins=30)
+    ax[1, 1].set_xlabel('Dominant Frequency (Hz)')
+    ax[1, 1].set_ylabel('Count')
+
+#    spectrum = spectra[np.argmax(rms_val)]
+#    ax[1, 1].plot(f, spectrum)
+#    ax[1, 1].set_xscale('log')
+#    ax[1, 1].set_yscale('log')
+#    if sensor == 'Geophone':
+#        ax[1, 1].set_ylabel('Spectrum (mm/s RMS)')
+#    else:
+#        ax[1, 1].set_ylabel('Spectrum (Pa RMS)')
+#    ax[1, 1].set_xlabel('Frequency (Hz)')
+#    ax[1, 1].set_title('Fichier de plus grande amplitude RMS')
 
     fig.suptitle(sites[site]+', Train: '+train)
 
