@@ -117,6 +117,7 @@ else:
 
 site = 0
 sensor = 'Geophone'
+max_rms_amplitudes = np.empty(70)
 for ntr in range(70):
     train = '_ ('+str(ntr)+')'
     print('Je traite le train {0:02d}'.format(ntr))
@@ -188,6 +189,8 @@ for ntr in range(70):
     for nt in np.arange(all_traces.shape[0]):
         rms_val[nt] = rms(all_traces[nt, :])
 
+    max_rms_amplitudes[ntr] = max(rms_val)
+
     ax[0, 1].hist(rms_val, bins=30, log=True, histtype='stepfilled')
     if sensor == 'Geophone':
         ax[0, 1].set_xlabel('RMS Trace Part. Vel. (mm/s)')
@@ -232,3 +235,15 @@ for ntr in range(70):
     if not exists('histograms'):
         mkdir('histograms')
     fig.savefig('histograms/train_no{0:02d}.pdf'.format(ntr))
+    fig.show()
+
+print(f"Minimum: {np.percentile(max_rms_amplitudes, 0)}")
+print(f"Percentile 33: {np.percentile(max_rms_amplitudes, 33.6)}")
+print(f"Percentile 66: {np.percentile(max_rms_amplitudes, 66.6)}")
+print(f"Maximum: {np.percentile(max_rms_amplitudes, 100)}")
+plt.hist(max_rms_amplitudes, bins=20)
+plt.xticks(range(0, 275, 25))
+plt.xlabel('RMS Trace Part. Vel. (mm/s)')
+plt.ylabel('Count')
+fig.savefig('histograms/max_amplitudes.pdf')
+plt.show()
