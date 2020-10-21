@@ -115,6 +115,9 @@ def main():
     )
     print(distances)
 
+    for start, end in [[0, 24], [24, 48], [48, None]]:
+        print(np.mean(distances[start:end]))
+
 
 if __name__ == '__main__':
     main()
