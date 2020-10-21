@@ -205,11 +205,11 @@ if __name__ == "__main__":
         posterior, vars, null_dims=[1, 2],
     )
     print("Against H0:", prob_max / prob_null)
-    _, prob_velocity, _, _, _, _, _ = get_stats(
+    _, _, _, _, _, _, prob_velocity = get_stats(
         posterior, vars, null_dims=[1],
     )
     print("Against H0 for velocity:", prob_velocity / prob_null)
-    _, prob_weights, _, _, _, _, _ = get_stats(
+    _, _, _, _, _, _, prob_weights = get_stats(
         posterior, vars, null_dims=[2],
     )
     print("Against H0 for weight:", prob_weights / prob_null)
