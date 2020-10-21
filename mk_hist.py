@@ -6,6 +6,7 @@ from os import mkdir
 from os.path import exists
 import pickle
 from scipy import signal
+from scipy import optimize as opt
 
 import numpy as np
 import pandas as pd
@@ -79,6 +80,31 @@ def get_spectrum(traces, sample_rates):
     return f, data
 
 
+def fwhm(y):
+    def gauss(x, p):  # p[0]==mean, p[1]==stdev
+        return 1.0/(p[1]*np.sqrt(2*np.pi))*np.exp(-(x-p[0])**2/(2*p[1]**2))*p[2]
+
+    def errfunc(p, x, y):
+        return gauss(x, p) - y  # Distance to the target function
+
+    x = np.arange(len(y))
+    y = y.copy()
+    y = y - min(y)
+
+    # Fit a guassian
+    p0 = [len(y)//2, len(y)//2, 100]  # Inital guess
+    p1, success = opt.leastsq(errfunc, p0, args=(x, y))
+
+    fit_mu, fit_stdev, fit_scale = p1
+
+    fwhm = 2*np.sqrt(2*np.log(2))*fit_stdev
+    # plt.clf()
+    # plt.scatter(x, y)
+    # plt.plot(x, gauss(x, p1))
+    # plt.show()
+    return fwhm
+
+
 sites = ('Site 1 - Fosse de l\'Est', 'Site 2 - Endicott', 'Site 3')
 
 trains = pd.read_pickle('./train_data.pkl')
@@ -118,6 +144,7 @@ else:
 site = 0
 sensor = 'Geophone'
 max_rms_amplitudes = np.empty(70)
+fwhm_time = np.empty(70)
 for ntr in range(70):
     train = '_ ('+str(ntr)+')'
     print('Je traite le train {0:02d}'.format(ntr))
@@ -191,6 +218,9 @@ for ntr in range(70):
 
     max_rms_amplitudes[ntr] = max(rms_val)
 
+    assert (all_sample_rates == all_sample_rates[0]).all()
+    fwhm_time[ntr] = fwhm(rms_val) * all_traces.shape[-1] / all_sample_rates[0]
+
     ax[0, 1].hist(rms_val, bins=30, log=True, histtype='stepfilled')
     if sensor == 'Geophone':
         ax[0, 1].set_xlabel('RMS Trace Part. Vel. (mm/s)')
@@ -246,4 +276,15 @@ plt.xticks(range(0, 275, 25))
 plt.xlabel('RMS Trace Part. Vel. (mm/s)')
 plt.ylabel('Count')
 fig.savefig('histograms/max_amplitudes.pdf')
+
+fwhm_time /= 60  # Minutes
+print(f"Min: {min(fwhm_time)}")
+print(f"Max: {max(fwhm_time)}")
+print(f"Mean: {np.mean(fwhm_time)}")
+print(f"Median: {np.median(fwhm_time)}")
+print(f"Std: {np.std(fwhm_time)}")
+plt.hist(fwhm_time, bins=30)
+plt.xlabel("Durée du passage [min]")
+plt.ylabel("Count")
+plt.savefig("histograms/time.png")
 plt.show()
