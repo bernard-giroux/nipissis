@@ -1003,10 +1003,12 @@ class PyNDVP(QMainWindow):
         print(f"Min: {min(times)}")
         print(f"Max: {max(times)}")
         print(f"Mean: {np.mean(times)}")
+        print(f"Median: {np.median(times)}")
         print(f"Std: {datetime.timedelta(seconds=np.std(numeric_deltas))}")
         plt.hist([d / 60 for d in numeric_deltas], bins=30)
         plt.xlabel("Durée du passage [min]")
         plt.ylabel("Count")
+        plt.savefig("histograms/time.png")
         plt.show()
 
 
