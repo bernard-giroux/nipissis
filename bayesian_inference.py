@@ -5,7 +5,7 @@ RS2_bayesian_regression.
 https://github.com/CloudyOverhead/RS2_bayesian_linear_regression.
 
 This algorithm was developed for data analysis associated with
-S. Dufour-Beauséjour, M Bernier, J. Simon, V. Gilbert, J Tuniq and
+S. Dufour-Beauséjour, M Bernier, J. Simon, V. Gilbert, J. Tuniq and
 A. Wendleder (2020) Comparing RADARSAT-2 and TerraSAR-X signatures of
 first-year snow-covered sea ice in Salluit, Deception Bay, and Kangiqsujuaq.
 Manuscript in preparation.
