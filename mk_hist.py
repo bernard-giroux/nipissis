@@ -329,3 +329,15 @@ plt.xlabel("Durée du passage [min]")
 plt.ylabel("Count")
 plt.savefig("histograms/time.png")
 plt.show()
+
+
+print(passage_times)
+mask = passage_times["Train"].str.contains("_")
+selected_trains = passage_times.loc[mask, ["passage_start", "passage_end"]]
+passage_start = pd.to_numeric(pd.to_datetime(selected_trains["passage_start"]))
+passage_end = pd.to_numeric(pd.to_datetime(selected_trains["passage_end"]))
+mean_times = pd.to_datetime((passage_end+passage_start) / 2)
+mean_times = mean_times.reset_index(drop=True)
+with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+    print(mean_times)
+mean_times.to_csv("mean_times.csv", index=False)
