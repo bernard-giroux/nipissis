@@ -911,7 +911,7 @@ class PyNDVP(QMainWindow):
             if i == 0:
                 all_traces = np.zeros((len(files), ntraces, traces[0].data.size), np.float32)
                 all_sample_rates = np.zeros((len(files), ntraces), np.float32)
-            
+
             all_sample_rates[i, 0:len(traces)] = [
                 tr.stats.sampling_rate for tr in traces
             ]
@@ -966,7 +966,7 @@ class PyNDVP(QMainWindow):
         else:
             ax[0, 1].set_xlabel('RMS Trace Pressure (Pa)')
         ax[0, 1].set_ylabel('Count')
-        
+
         f, spectra = get_spectrum(all_traces, all_sample_rates)
 
         ax[1, 0].plot(f, spectra.mean(axis=0))
@@ -978,11 +978,11 @@ class PyNDVP(QMainWindow):
             ax[1, 0].set_ylabel('Amplitude (Pa RMS)')
         ax[1, 0].set_xlabel('Frequency (Hz)')
         ax[1, 0].set_title('Spectre moyen')
-    
+
         f_E_max = np.empty((spectra.shape[0],))
         for ns in np.arange(f_E_max.size):
             f_E_max[ns] = f[np.argmax(spectra[ns,:])]
-    
+
         ax[1, 1].hist(f_E_max, bins=30)
         ax[1, 1].set_xlabel('Dominant Frequency (Hz)')
         ax[1, 1].set_ylabel('Count')
