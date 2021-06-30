@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 import obspy
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
@@ -89,10 +90,11 @@ def fwhm(y):
 
     x = np.arange(len(y))
     y = y.copy()
+    y = np.log10(y)
     y = y - min(y)
 
     # Fit a guassian
-    p0 = [len(y)//2, len(y)//2, 100]  # Inital guess
+    p0 = [len(y)//2, len(y)//2, np.log10(100)]  # Inital guess
     p1, success = opt.leastsq(errfunc, p0, args=(x, y))
 
     fit_mu, fit_stdev, fit_scale = p1
@@ -161,7 +163,7 @@ for ntr in range(70):
         files = get_file_list(starttime, endtime, site+1, sensor)
 
     for i, file in enumerate(files):
-        filename = root_dir+'site'+str(site+1)+'/'+file
+        filename = root_dir+'all/'+file
         traces = obspy.read(filename)
         ntraces = len(traces)
         if i == 0:
@@ -219,7 +221,12 @@ for ntr in range(70):
     max_rms_amplitudes[ntr] = max(rms_val)
 
     assert (all_sample_rates == all_sample_rates[0]).all()
-    fwhm_time[ntr] = fwhm(rms_val) * all_traces.shape[-1] / all_sample_rates[0]
+    # Sample rate in microseconds.
+    # total_passage_time = (endtime-starttime).seconds / 60  # Minutes.
+    # rms_val_temp = rms_val.reshape([len(files), -1])
+    # rms_val_temp = np.mean(rms_val_temp, axis=1)
+    # fwhm_time[ntr] = total_passage_time * fwhm(rms_val_temp) / len(rms_val_temp)
+    # print(fwhm_time[ntr])
 
     ax[0, 1].hist(rms_val, bins=30, log=True, histtype='stepfilled')
     if sensor == 'Geophone':
@@ -265,25 +272,59 @@ for ntr in range(70):
     if not exists('histograms'):
         mkdir('histograms')
     fig.savefig('histograms/train_no{0:02d}.pdf'.format(ntr))
-    fig.show()
+    plt.clf()
 
-print(f"Minimum: {np.percentile(max_rms_amplitudes, 0)}")
-print(f"Percentile 33: {np.percentile(max_rms_amplitudes, 33.6)}")
-print(f"Percentile 66: {np.percentile(max_rms_amplitudes, 66.6)}")
-print(f"Maximum: {np.percentile(max_rms_amplitudes, 100)}")
+    if ntr == 0:
+        locator = mdates.AutoDateLocator(minticks=10, maxticks=20)
+        formatter = mdates.ConciseDateFormatter(locator)
+
+        mpl.rc('font', size=20)
+        plt.figure(figsize=(12, 8))
+        to_plot_rms = rms_val.reshape([-1, 24])
+        to_plot_rms = to_plot_rms.mean(axis=1)
+        time = pd.date_range(
+            starttime,
+            endtime,
+            periods=len(to_plot_rms),
+        )
+        plt.plot_date(time, to_plot_rms, ms=6, c='k', ls='-')
+        plt.xlabel("Temps")
+        plt.gcf().autofmt_xdate()
+        plt.gca().xaxis.set_major_locator(locator)
+        plt.gca().xaxis.set_major_formatter(formatter)
+        plt.ylabel("Amplitude RMS moyenne [mm/s]")
+        plt.grid(True, which='major', color='k', alpha=.35)
+        plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
+        plt.minorticks_on()
+        plt.semilogy()
+        plt.tight_layout()
+        plt.savefig("fig/data.png")
+        plt.show()
+
+pickle.dump(max_rms_amplitudes, open("rms_val.pkl", "wb"))
+
+plt.clf()
 plt.hist(max_rms_amplitudes, bins=20)
 plt.xticks(range(0, 275, 25))
 plt.xlabel('RMS Trace Part. Vel. (mm/s)')
 plt.ylabel('Count')
-fig.savefig('histograms/max_amplitudes.pdf')
+fig.savefig('histograms/max_amplitudes.png')
+plt.show()
 
-fwhm_time /= 60  # Minutes
-print(f"Min: {min(fwhm_time)}")
-print(f"Max: {max(fwhm_time)}")
-print(f"Mean: {np.mean(fwhm_time)}")
-print(f"Median: {np.median(fwhm_time)}")
-print(f"Std: {np.std(fwhm_time)}")
-plt.hist(fwhm_time, bins=30)
+print(max(max_rms_amplitudes))
+max_rms_amplitudes_temp = np.sort(max_rms_amplitudes)[:-1]
+print(f"Minimum: {np.percentile(max_rms_amplitudes_temp, 0)}")
+print(f"Percentile 33: {np.percentile(max_rms_amplitudes_temp, 33)}")
+print(f"Percentile 66: {np.percentile(max_rms_amplitudes_temp, 66)}")
+print(f"Maximum: {np.percentile(max_rms_amplitudes_temp, 100)}")
+
+fwhm_temp = np.sort(fwhm_time)[:-2]
+print(f"Min: {min(fwhm_temp)}")
+print(f"Max: {max(fwhm_temp)}")
+print(f"Mean: {np.mean(fwhm_temp)}")
+print(f"Median: {np.median(fwhm_temp)}")
+print(f"Std: {np.std(fwhm_temp)}")
+plt.hist(fwhm_temp, bins=30)
 plt.xlabel("Durée du passage [min]")
 plt.ylabel("Count")
 plt.savefig("histograms/time.png")
