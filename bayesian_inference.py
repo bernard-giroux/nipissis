@@ -15,6 +15,8 @@ import numpy as np
 import matplotlib as mpl
 from matplotlib import pyplot as plt
 
+mpl.rc('font', size=20)
+
 
 def get_posterior(vars, xs, y):
     *as_, std = vars
@@ -130,9 +132,10 @@ def gaussian_fill_between(a, b, std, xlim=None, ylim=None):
     )
 
 
-def plot_linear_dependency(x, y, a, b, std, xlabel="", ylabel="", savepath=""):
+def plot_linear_dependency(x, y, a, b, std, xlabel="", ylabel="", title="",
+                           savepath=""):
     plt.figure(figsize=(12, 8))
-    plt.scatter(x, y, s=4, c="k")
+    plt.scatter(x, y, s=12, c="k")
     extend = x.max() - x.min()
     x_line = np.linspace(x.min()-extend, x.max()+extend, 2)
     line = a*x_line + b
@@ -141,13 +144,19 @@ def plot_linear_dependency(x, y, a, b, std, xlabel="", ylabel="", savepath=""):
     plt.plot(x_line, line, ls='--', c="k")
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
+    plt.suptitle(title)
+    plt.tight_layout(rect=[0, 0, 1, 0.95 if title else 1.0])
+    plt.grid(True, which='major', color='k', alpha=.35)
+    plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
+    plt.minorticks_on()
     if savepath:
         plt.savefig(savepath)
     plt.show()
     plt.close()
 
 
-def plot_parameters(vars, var_names, probs_mar, savepath=""):
+def plot_parameters(vars, var_names, probs_mar, units=None, title="",
+                    savepath=""):
     plt.figure(figsize=(12, 8))
     gs = mpl.gridspec.GridSpec(1, len(var_names))
     axes = list()
@@ -155,23 +164,33 @@ def plot_parameters(vars, var_names, probs_mar, savepath=""):
         axes.append(plt.subplot(gs[i]))
 
     axes[0].set_ylabel(
-        r"Marginal probability $\frac{p(\theta)}{p_{max}(\theta)}$"
+        "Probabilité marginale normalisée "
+        "$\\frac{p(\\theta)}{p_{max}(\\theta)}$"
     )
 
     for i, (var, name) in enumerate(zip(vars, var_names)):
         ax = axes[i]
         width = np.diff(var)
         probs_mar_ = probs_mar[i] / probs_mar[i].max()
+        print(name, 2*weighted_std(var, probs_mar_))
         ax.bar(var, probs_mar_, [*width, width[-1]], color=[.3, .3, .3])
+        ax.grid(True, which='major', color='k', alpha=.1)
+        ax.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
+        ax.minorticks_on()
+        if units is not None:
+            unit = units[i]
+            name = f"{name} $\\left[{unit}\\right]$"
         ax.set_xlabel(name)
-        ax.set_xlim([var.min(), var.max()])
         if i == len(vars) - 1:
+            ax.get_xaxis().set_ticklabels([])
             ax.set_xscale('log')
             ax.set_xticks([2E1, 6E1], [2E1, 6E1])
         if i > 0:
             ax.get_yaxis().set_ticklabels([])
         ax.tick_params(direction='in', which="both", right=1, top=0)
 
+    plt.suptitle(title)
+    plt.tight_layout(rect=[0, 0, 1, 0.95 if title else 1.0])
     if savepath:
         plt.savefig(savepath)
     plt.show()
@@ -190,7 +209,7 @@ if __name__ == "__main__":
     distance_dep = np.linspace(0.0, -.25, STEPS)
     velocity_dep = np.linspace(0.0, 5., STEPS)
     poids_dep = np.linspace(.0, .005, STEPS)
-    rms_0 = np.linspace(0, 120, STEPS)
+    rms_0 = np.linspace(-40, 120, STEPS)
     rms_noise = np.logspace(1.2, 1.7, STEPS)
     vars = [distance_dep, velocity_dep, poids_dep, rms_0, rms_noise]
     var_names = [
@@ -201,10 +220,12 @@ if __name__ == "__main__":
     posterior = get_posterior(
         vars, [distance, velocity, poids, np.ones_like(rms)], rms,
     )
+    print(posterior.sum())
     _, prob_max, _, vars_max, probs_mar, _, prob_null = get_stats(
         posterior, vars, null_dims=[1, 2],
     )
     print("Against H0:", prob_max / prob_null)
+    print("Most probable model:", vars_max)
     _, _, _, _, _, _, prob_velocity = get_stats(
         posterior, vars, null_dims=[1],
     )
@@ -214,14 +235,21 @@ if __name__ == "__main__":
     )
     print("Against H0 for weight:", prob_weights / prob_null)
     a1, a2, a3, b, std = vars_max
+
+    # Maximum 24-channel mean RMS amplitude [mm/s].
+    # Mean over 8 minutes.
+    # Maximum over train passage.
+
     plot_linear_dependency(
         distance,
         rms-a2*velocity-a3*poids,
         a=a1,
         b=b,
         std=std,
-        xlabel=r"$d$",
-        ylabel=r"$y-\beta_v v-\beta_w w$",
+        xlabel="Distance à la voie ferrée $d$ [m]",
+        ylabel="Contribution de la distance aux vibrations \n"
+               "$y-\\beta_v v-\\beta_w w$ [mm/s]",
+        title="a)",
         savepath="fig/distance_dependency",
     )
     plot_linear_dependency(
@@ -230,8 +258,10 @@ if __name__ == "__main__":
         a=a2,
         b=b,
         std=std,
-        xlabel=r"$v$",
-        ylabel=r"$y-\beta_d d-\beta_w w$",
+        xlabel=r"Vitesse des trains $v$ [mph]",
+        ylabel="Contribution de la vitesse aux vibrations \n"
+               "$y-\\beta_d d-\\beta_w w$ [mm/s]",
+        title="b)",
         savepath="fig/velocity_dependency",
     )
     plot_linear_dependency(
@@ -240,8 +270,23 @@ if __name__ == "__main__":
         a=a3,
         b=b,
         std=std,
-        xlabel=r"$w$",
-        ylabel=r"$y-\beta_d d-\beta_v v$",
+        xlabel="Poids des trains $w$ [tonnes]",
+        ylabel="Contribution du poids aux vibrations \n"
+               "$y-\\beta_d d-\\beta_v v$ [mm/s]",
+        title="c)",
         savepath="fig/weight_dependency",
     )
-    plot_parameters(vars, var_names, probs_mar, savepath="fig/params")
+    plot_parameters(
+        vars,
+        var_names,
+        probs_mar,
+        units=[
+            "\\frac{mm}{s \\cdot m}",
+            "\\frac{mm}{m}",
+            "\\frac{mm}{s \\cdot tonnes}",
+            "\\frac{mm}{s}",
+            "\\frac{mm}{s}",
+        ],
+        title="d)",
+        savepath="fig/params",
+    )

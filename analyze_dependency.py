@@ -3,6 +3,7 @@
 import pickle as pkl
 
 import pandas as pd
+import matplotlib as mpl
 from matplotlib import pyplot as plt
 
 DISTANCES_SITES = {0: 93.02, 1: 739.80, 2: 537.42}
@@ -35,23 +36,40 @@ train_data = train_data[~pd.isna(train_data["MPH"])]
 with pd.option_context('display.max_rows', None, 'display.max_columns', None):
     print(train_data)
 
+mpl.rc('font', size=20)
+
 plt.figure(figsize=(12, 8))
-plt.scatter(train_data["Distance"], train_data["RMS"])
-plt.xlabel("Distance")
-plt.ylabel("RMS")
-plt.grid()
+plt.scatter(train_data["Distance"], train_data["RMS"], s=12, c="k")
+plt.xlabel("Distance [m]")
+plt.ylabel("Amplitude des vibrations [mm/s]")
+plt.suptitle("a)")
+plt.grid(True, which='major', color='k', alpha=.35)
+plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
+plt.minorticks_on()
+plt.tight_layout(rect=[0, 0, 1, 0.95])
+plt.savefig("fig/distance.png")
 plt.show()
 
 plt.figure(figsize=(12, 8))
-plt.scatter(train_data["MPH"], train_data["RMS"])
-plt.xlabel("MPH")
-plt.ylabel("RMS")
-plt.grid()
+plt.scatter(train_data["MPH"], train_data["RMS"], s=12, c="k")
+plt.xlabel("Vitesse [mph]")
+plt.ylabel("Amplitude des vibrations [mm/s]")
+plt.suptitle("b)")
+plt.grid(True, which='major', color='k', alpha=.35)
+plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
+plt.minorticks_on()
+plt.tight_layout(rect=[0, 0, 1, 0.95])
+plt.savefig("fig/velocity.png")
 plt.show()
 
 plt.figure(figsize=(12, 8))
-plt.scatter(train_data["Poids"], train_data["RMS"])
-plt.xlabel("Poids")
-plt.ylabel("RMS")
-plt.grid()
+plt.scatter(train_data["Poids"], train_data["RMS"], s=12, c="k")
+plt.xlabel("Poids [tonnes]")
+plt.ylabel("Amplitude des vibrations [mm/s]")
+plt.suptitle("c)")
+plt.grid(True, which='major', color='k', alpha=.35)
+plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
+plt.minorticks_on()
+plt.tight_layout(rect=[0, 0, 1, 0.95])
+plt.savefig("fig/weight.png")
 plt.show()

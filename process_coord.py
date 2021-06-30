@@ -90,9 +90,10 @@ def closest_distances(points, lines):
 def plot_points(railway, geophones, hydrophones):
     plt.plot(*railway.T[:2], c='k')
     plt.scatter(*geophones.T[:2], s=.5, c='tab:orange')
-    plt.scatter(*hydrophones.T[:2], s=.5, c='tab:blue')
+    # plt.scatter(*hydrophones.T[:2], s=.5, c='tab:blue')
     plt.gca().set_aspect('equal')
-    format_save_plot()
+    plt.tight_layout()
+    format_save_plot("acquisition")
 
 
 def main():
