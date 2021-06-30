@@ -298,7 +298,7 @@ for ntr in range(70):
         plt.minorticks_on()
         plt.semilogy()
         plt.tight_layout()
-        plt.savefig("fig/data.png")
+        plt.savefig("data.png")
         plt.show()
 
 pickle.dump(max_rms_amplitudes, open("rms_val.pkl", "wb"))

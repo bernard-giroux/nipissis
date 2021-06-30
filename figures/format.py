@@ -2,17 +2,19 @@
 
 """Custom Matplotlib plot format."""
 
-from os import mkdir
-from os.path import join, pardir
+from os import listdir, remove
+from os.path import join, curdir
 
 from matplotlib import pyplot as plt
-from shutil import rmtree
+
+FIGURES_DIR = curdir
 
 
 def clear_figures():
-    figures_path = join(pardir, "figures")
-    rmtree(figures_path, ignore_errors=True)
-    mkdir(figures_path)
+    for filename in listdir(FIGURES_DIR):
+        extension = filename.split('.')[-1]
+        if extension == 'png':
+            remove(join(FIGURES_DIR, filename))
 
 
 def format_plot(show=False):
@@ -27,7 +29,7 @@ def format_plot(show=False):
 def format_save_plot(title="", show=True):
     format_plot()
     if title:
-        plt.savefig(join("fig", title + '.png'))
+        plt.savefig(join(FIGURES_DIR, title + '.png'))
     if show:
         plt.show()
     else:
@@ -147,6 +149,7 @@ plt.rcParams['figure.dpi'] = 100  # figure dots per inch
 plt.rcParams['figure.facecolor'] = "white"  # figure facecolor
 plt.rcParams['figure.edgecolor'] = "white"  # figure edgecolor
 plt.rcParams['figure.autolayout'] = False  # automatically adjust subplot.
+
 
 if __name__ == '__main__':
     clear_figures()
