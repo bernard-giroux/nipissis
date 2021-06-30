@@ -46,6 +46,21 @@ matplotlib.use('Qt5Agg')
 locale = QLocale()
 
 
+def get_spectrum(traces, sample_rates):
+    f, Pxx = signal.periodogram(traces[0],
+                                sample_rates[0],
+                                scaling='spectrum')
+    data = np.empty((len(traces), Pxx.size))
+    data[0] = Pxx
+    for n in range(1, len(traces)):
+        f, Pxx = signal.periodogram(traces[n],
+                                    sample_rates[n],
+                                    scaling='spectrum')
+        data[n] = Pxx
+
+    return f, data
+
+
 class Site_rms:
     def __init__(self, starttime_g, mE_g, starttime_h, mE_h):
         self.mE_g = mE_g
@@ -217,7 +232,7 @@ class Data_plot_canvas(MyMplCanvas):
         self.axeb.set_position([0.925, 0.15, 0.02, 0.77])
         self.draw()
         self.i1 = None
-        
+
     def plot_displacement(self, trace, sensor):
         if sensor == 'Geophone':
             y = integrate(trace.data, trace.stats.sampling_rate)
@@ -373,6 +388,8 @@ class PyNDVP(QMainWindow):
         self.data_plot.plot_trace(self.traces[self.channels.currentRow()],
                                   self.type_sensor.currentText())
 
+        self.analyze_timedeltas()
+
     def init_ui(self):
 
         self.site_no = QComboBox()
@@ -413,7 +430,7 @@ class PyNDVP(QMainWindow):
         self.save_button = QPushButton()
         self.save_button.setText("Save passage times")
         self.save_button.clicked.connect(self.save_passage_times)
-        
+
         self.hist_button = QPushButton()
         self.hist_button.setText('Histograms')
         self.hist_button.clicked.connect(self.get_histograms)
@@ -876,7 +893,7 @@ class PyNDVP(QMainWindow):
         for train in train_list:
             if train not in current_trains:
                 self.train_list.addItem(train)
-                
+
     def get_histograms(self):
         starttime, endtime = self.fetch_start_end(by_train=True)
         files = self.get_file_list(starttime, endtime)
@@ -884,15 +901,21 @@ class PyNDVP(QMainWindow):
             QMessageBox.warning(self, 'Warning',
                                 'No file found for selected period of time')
             return
-        
+
         # load in all data
-        all_traces = np.empty((0,),np.float32)
         site = self.site_no.currentIndex()+1
-        for file in files:
+        for i, file in enumerate(files):
             filename = root_dir+'site'+str(site)+'/'+file
             traces = obspy.read(filename)
-            
             ntraces = len(traces)
+            if i == 0:
+                all_traces = np.zeros((len(files), ntraces, traces[0].data.size), np.float32)
+                all_sample_rates = np.zeros((len(files), ntraces), np.float32)
+
+            all_sample_rates[i, 0:len(traces)] = [
+                tr.stats.sampling_rate for tr in traces
+            ]
+
             if site == 1 or site == 2:  # Fosse de l'Est or Endicott
                 if ntraces != 24:
                     print('\n\nWarning: only '+str(ntraces)+' in '+filename+'\n')
@@ -900,12 +923,12 @@ class PyNDVP(QMainWindow):
                     for nt in range(ntraces):
                         tr = traces[nt]
                         tr.data *= 1000.0 * tr.stats.calib / sensitivity_g[nt]
-                        all_traces = np.append(all_traces, tr.data)
+                        all_traces[i, nt, :] = tr.data
                 else:
                     for nt in range(ntraces):
                         tr = traces[nt]
                         tr.data *= tr.stats.calib / sensitivity_h[nt]
-                        all_traces = np.append(all_traces, tr.data)
+                        all_traces[i, nt, :] = tr.data
             else:
                 if ntraces != 48:
                     print('\n\nWarning: only '+str(ntraces)+' in '+filename+'\n')
@@ -913,37 +936,80 @@ class PyNDVP(QMainWindow):
                     for nt in range(24):
                         tr = traces[nt]
                         tr.data *= 1000.0 * tr.stats.calib / sensitivity_g[nt]
-                        all_traces = np.append(all_traces, tr.data)
+                        all_traces[i, nt, :] = tr.data
                 else:
                     for nt in range(24):
                         tr = traces[nt+24]
                         tr.data *= tr.stats.calib / sensitivity_h[nt]
-                        all_traces = np.append(all_traces, tr.data)
-        
-        fig, ax = plt.subplots(1, 2, figsize=[8.4, 4.8])
-        ax[0].hist(all_traces, bins=30, log=True)
-        if self.type_sensor.currentText() == 'Geophone':
-            ax[0].set_xlabel('Particle Velocity (mm/s)')
-        else:
-            ax[0].set_xlabel('Pressure (Pa)')
-        ax[0].set_ylabel('Count')
-        
+                        all_traces[i, nt, :] = tr.data
+
         all_traces = all_traces.reshape((-1, tr.data.size))
+        all_sample_rates = all_sample_rates.flatten()
+        mask = np.any(all_traces != 0, axis=1)
+        all_traces, all_sample_rates = all_traces[mask], all_sample_rates[mask]
+
+        fig, ax = plt.subplots(2, 2, figsize=[8.4, 6.8])
+        ax[0, 0].hist(all_traces.flatten(), bins=30, log=True)
+        if self.type_sensor.currentText() == 'Geophone':
+            ax[0, 0].set_xlabel('Particle Velocity (mm/s)')
+        else:
+            ax[0, 0].set_xlabel('Pressure (Pa)')
+        ax[0, 0].set_ylabel('Count')
+
         rms_val = np.empty((all_traces.shape[0],))
         for nt in np.arange(all_traces.shape[0]):
             rms_val[nt] = rms(all_traces[nt,:])
-            
-        ax[1].hist(rms_val, bins=30, log=True)
+
+        ax[0, 1].hist(rms_val, bins=30, log=True)
         if self.type_sensor.currentText() == 'Geophone':
-            ax[1].set_xlabel('RMS Trace Part. Vel. (mm/s)')
+            ax[0, 1].set_xlabel('RMS Trace Part. Vel. (mm/s)')
         else:
-            ax[1].set_xlabel('RMS Trace Pressure (Pa)')
-        ax[1].set_ylabel('Count')
+            ax[0, 1].set_xlabel('RMS Trace Pressure (Pa)')
+        ax[0, 1].set_ylabel('Count')
+
+        f, spectra = get_spectrum(all_traces, all_sample_rates)
+
+        ax[1, 0].plot(f, spectra.mean(axis=0))
+        ax[1, 0].set_xscale('log')
+        ax[1, 0].set_yscale('log')
+        if self.type_sensor.currentText() == 'Geophone':
+            ax[1, 0].set_ylabel('Amplitude (mm/s RMS)')
+        else:
+            ax[1, 0].set_ylabel('Amplitude (Pa RMS)')
+        ax[1, 0].set_xlabel('Frequency (Hz)')
+        ax[1, 0].set_title('Spectre moyen')
+
+        f_E_max = np.empty((spectra.shape[0],))
+        for ns in np.arange(f_E_max.size):
+            f_E_max[ns] = f[np.argmax(spectra[ns,:])]
+
+        ax[1, 1].hist(f_E_max, bins=30)
+        ax[1, 1].set_xlabel('Dominant Frequency (Hz)')
+        ax[1, 1].set_ylabel('Count')
 
         fig.suptitle(self.site_no.currentText()+', Train: '+self.train_list.currentText())
-        
+
         fig.tight_layout(rect=[0, 0.03, 1, 0.95])
         fig.show()
+
+    def analyze_timedeltas(self):
+        mask = self.passage_times['Train'].str.contains('_').values
+        mask[-1] = False
+        times = (
+            self.passage_times.loc[mask, 'passage_end'].values
+            - self.passage_times.loc[mask, 'passage_start'].values
+        )
+        numeric_deltas = [time.total_seconds() for time in times]
+        print(f"Min: {min(times)}")
+        print(f"Max: {max(times)}")
+        print(f"Mean: {np.mean(times)}")
+        print(f"Median: {np.median(times)}")
+        print(f"Std: {datetime.timedelta(seconds=np.std(numeric_deltas))}")
+        plt.hist([d / 60 for d in numeric_deltas], bins=30)
+        plt.xlabel("Durée du passage [min]")
+        plt.ylabel("Count")
+        plt.savefig("histograms/time.png")
+        plt.show()
 
 
 if __name__ == '__main__':

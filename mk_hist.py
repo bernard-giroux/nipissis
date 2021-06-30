@@ -6,11 +6,13 @@ from os import mkdir
 from os.path import exists
 import pickle
 from scipy import signal
+from scipy import optimize as opt
 
 import numpy as np
 import pandas as pd
 import obspy
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
@@ -79,6 +81,32 @@ def get_spectrum(traces, sample_rates):
     return f, data
 
 
+def fwhm(y):
+    def gauss(x, p):  # p[0]==mean, p[1]==stdev
+        return 1.0/(p[1]*np.sqrt(2*np.pi))*np.exp(-(x-p[0])**2/(2*p[1]**2))*p[2]
+
+    def errfunc(p, x, y):
+        return gauss(x, p) - y  # Distance to the target function
+
+    x = np.arange(len(y))
+    y = y.copy()
+    y = np.log10(y)
+    y = y - min(y)
+
+    # Fit a guassian
+    p0 = [len(y)//2, len(y)//2, np.log10(100)]  # Inital guess
+    p1, success = opt.leastsq(errfunc, p0, args=(x, y))
+
+    fit_mu, fit_stdev, fit_scale = p1
+
+    fwhm = 2*np.sqrt(2*np.log(2))*fit_stdev
+    # plt.clf()
+    # plt.scatter(x, y)
+    # plt.plot(x, gauss(x, p1))
+    # plt.show()
+    return fwhm
+
+
 sites = ('Site 1 - Fosse de l\'Est', 'Site 2 - Endicott', 'Site 3')
 
 trains = pd.read_pickle('./train_data.pkl')
@@ -117,7 +145,9 @@ else:
 
 site = 0
 sensor = 'Geophone'
-for ntr in range(71):
+max_rms_amplitudes = np.empty(70)
+fwhm_time = np.empty(70)
+for ntr in range(70):
     train = '_ ('+str(ntr)+')'
     print('Je traite le train {0:02d}'.format(ntr))
     train_match = passage_times['Train'] == train
@@ -132,16 +162,18 @@ for ntr in range(71):
         site += 1
         files = get_file_list(starttime, endtime, site+1, sensor)
 
-        filename = root_dir+'site'+str(site+1)+'/'+file
-    all_traces = np.zeros((len(files), 48, LEN_FILE), np.float32)
-    all_sample_rates = np.zeros((len(files), 48), np.float32)
     for i, file in enumerate(files):
+        filename = root_dir+'all/'+file
         traces = obspy.read(filename)
+        ntraces = len(traces)
+        if i == 0:
+            all_traces = np.zeros((len(files), ntraces, traces[0].data.size), np.float32)
+            all_sample_rates = np.zeros((len(files), ntraces), np.float32)
+
         all_sample_rates[i, 0:len(traces)] = [
             tr.stats.sampling_rate for tr in traces
         ]
 
-        ntraces = len(traces)
         if site == 0 or site == 1:  # Fosse de l'Est or Endicott
             if ntraces != 24:
                 print('\nWarning: only '+str(ntraces)+' in '+filename+'\n')
@@ -169,12 +201,12 @@ for ntr in range(71):
                     tr.data *= tr.stats.calib / sensitivity_h[nt]
                     all_traces[i, nt, :] = tr.data
 
-    all_traces = all_traces.reshape([-1, LEN_FILE])
+    all_traces = all_traces.reshape([-1, tr.data.size])
     all_sample_rates = all_sample_rates.flatten()
     mask = np.any(all_traces != 0, axis=1)
     all_traces, all_sample_rates = all_traces[mask], all_sample_rates[mask]
 
-    fig, ax = plt.subplots(2, 2, figsize=[8.4, 4.8])
+    fig, ax = plt.subplots(2, 2, figsize=[8.4, 6.8])
     ax[0, 0].hist(all_traces.flatten(), bins=30, log=True, histtype='stepfilled')
     if sensor == 'Geophone':
         ax[0, 0].set_xlabel('Particle Velocity (mm/s)')
@@ -185,6 +217,16 @@ for ntr in range(71):
     rms_val = np.empty((all_traces.shape[0],))
     for nt in np.arange(all_traces.shape[0]):
         rms_val[nt] = rms(all_traces[nt, :])
+
+    max_rms_amplitudes[ntr] = max(rms_val)
+
+    assert (all_sample_rates == all_sample_rates[0]).all()
+    # Sample rate in microseconds.
+    # total_passage_time = (endtime-starttime).seconds / 60  # Minutes.
+    # rms_val_temp = rms_val.reshape([len(files), -1])
+    # rms_val_temp = np.mean(rms_val_temp, axis=1)
+    # fwhm_time[ntr] = total_passage_time * fwhm(rms_val_temp) / len(rms_val_temp)
+    # print(fwhm_time[ntr])
 
     ax[0, 1].hist(rms_val, bins=30, log=True, histtype='stepfilled')
     if sensor == 'Geophone':
@@ -199,22 +241,30 @@ for ntr in range(71):
     ax[1, 0].set_xscale('log')
     ax[1, 0].set_yscale('log')
     if sensor == 'Geophone':
-        ax[1, 0].set_ylabel('Spectrum (mm/s RMS)')
+        ax[1, 0].set_ylabel('Amplitude (mm/s RMS)')
     else:
-        ax[1, 0].set_ylabel('Spectrum (Pa RMS)')
+        ax[1, 0].set_ylabel('Amplitude (Pa RMS)')
     ax[1, 0].set_xlabel('Frequency (Hz)')
     ax[1, 0].set_title('Spectre moyen')
 
-    spectrum = spectra[np.argmax(rms_val)]
-    ax[1, 1].plot(f, spectrum)
-    ax[1, 1].set_xscale('log')
-    ax[1, 1].set_yscale('log')
-    if sensor == 'Geophone':
-        ax[1, 1].set_ylabel('Spectrum (mm/s RMS)')
-    else:
-        ax[1, 1].set_ylabel('Spectrum (Pa RMS)')
-    ax[1, 1].set_xlabel('Frequency (Hz)')
-    ax[1, 1].set_title('Fichier de plus grande amplitude RMS')
+    f_E_max = np.empty((spectra.shape[0],))
+    for ns in np.arange(f_E_max.size):
+        f_E_max[ns] = f[np.argmax(spectra[ns,:])]
+
+    ax[1, 1].hist(f_E_max, bins=30)
+    ax[1, 1].set_xlabel('Dominant Frequency (Hz)')
+    ax[1, 1].set_ylabel('Count')
+
+#    spectrum = spectra[np.argmax(rms_val)]
+#    ax[1, 1].plot(f, spectrum)
+#    ax[1, 1].set_xscale('log')
+#    ax[1, 1].set_yscale('log')
+#    if sensor == 'Geophone':
+#        ax[1, 1].set_ylabel('Spectrum (mm/s RMS)')
+#    else:
+#        ax[1, 1].set_ylabel('Spectrum (Pa RMS)')
+#    ax[1, 1].set_xlabel('Frequency (Hz)')
+#    ax[1, 1].set_title('Fichier de plus grande amplitude RMS')
 
     fig.suptitle(sites[site]+', Train: '+train)
 
@@ -222,3 +272,72 @@ for ntr in range(71):
     if not exists('histograms'):
         mkdir('histograms')
     fig.savefig('histograms/train_no{0:02d}.pdf'.format(ntr))
+    plt.clf()
+
+    if ntr == 0:
+        locator = mdates.AutoDateLocator(minticks=10, maxticks=20)
+        formatter = mdates.ConciseDateFormatter(locator)
+
+        mpl.rc('font', size=20)
+        plt.figure(figsize=(12, 8))
+        to_plot_rms = rms_val.reshape([-1, 24])
+        to_plot_rms = to_plot_rms.mean(axis=1)
+        time = pd.date_range(
+            starttime,
+            endtime,
+            periods=len(to_plot_rms),
+        )
+        plt.plot_date(time, to_plot_rms, ms=6, c='k', ls='-')
+        plt.xlabel("Temps")
+        plt.gcf().autofmt_xdate()
+        plt.gca().xaxis.set_major_locator(locator)
+        plt.gca().xaxis.set_major_formatter(formatter)
+        plt.ylabel("Amplitude RMS moyenne [mm/s]")
+        plt.grid(True, which='major', color='k', alpha=.35)
+        plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
+        plt.minorticks_on()
+        plt.semilogy()
+        plt.tight_layout()
+        plt.savefig("fig/data.png")
+        plt.show()
+
+pickle.dump(max_rms_amplitudes, open("rms_val.pkl", "wb"))
+
+plt.clf()
+plt.hist(max_rms_amplitudes, bins=20)
+plt.xticks(range(0, 275, 25))
+plt.xlabel('RMS Trace Part. Vel. (mm/s)')
+plt.ylabel('Count')
+fig.savefig('histograms/max_amplitudes.png')
+plt.show()
+
+print(max(max_rms_amplitudes))
+max_rms_amplitudes_temp = np.sort(max_rms_amplitudes)[:-1]
+print(f"Minimum: {np.percentile(max_rms_amplitudes_temp, 0)}")
+print(f"Percentile 33: {np.percentile(max_rms_amplitudes_temp, 33)}")
+print(f"Percentile 66: {np.percentile(max_rms_amplitudes_temp, 66)}")
+print(f"Maximum: {np.percentile(max_rms_amplitudes_temp, 100)}")
+
+fwhm_temp = np.sort(fwhm_time)[:-2]
+print(f"Min: {min(fwhm_temp)}")
+print(f"Max: {max(fwhm_temp)}")
+print(f"Mean: {np.mean(fwhm_temp)}")
+print(f"Median: {np.median(fwhm_temp)}")
+print(f"Std: {np.std(fwhm_temp)}")
+plt.hist(fwhm_temp, bins=30)
+plt.xlabel("Durée du passage [min]")
+plt.ylabel("Count")
+plt.savefig("histograms/time.png")
+plt.show()
+
+
+print(passage_times)
+mask = passage_times["Train"].str.contains("_")
+selected_trains = passage_times.loc[mask, ["passage_start", "passage_end"]]
+passage_start = pd.to_numeric(pd.to_datetime(selected_trains["passage_start"]))
+passage_end = pd.to_numeric(pd.to_datetime(selected_trains["passage_end"]))
+mean_times = pd.to_datetime((passage_end+passage_start) / 2)
+mean_times = mean_times.reset_index(drop=True)
+with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+    print(mean_times)
+mean_times.to_csv("mean_times.csv", index=False)
