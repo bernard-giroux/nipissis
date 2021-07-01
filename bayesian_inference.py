@@ -132,7 +132,6 @@ def gaussian_fill_between(a, b, std, xlim=None, ylim=None):
 
 def plot_linear_dependency(x, y, a, b, std, xlabel="", ylabel="", title="",
                            savepath=""):
-    plt.figure(figsize=(12, 8))
     plt.scatter(x, y, s=12, c="k")
     extend = x.max() - x.min()
     x_line = np.linspace(x.min()-extend, x.max()+extend, 2)
@@ -147,10 +146,6 @@ def plot_linear_dependency(x, y, a, b, std, xlabel="", ylabel="", title="",
     plt.grid(True, which='major', color='k', alpha=.35)
     plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
     plt.minorticks_on()
-    if savepath:
-        plt.savefig(savepath)
-    plt.show()
-    plt.close()
 
 
 def plot_parameters(vars, var_names, probs_mar, units=None, title="",
@@ -189,7 +184,3 @@ def plot_parameters(vars, var_names, probs_mar, units=None, title="",
 
     plt.suptitle(title)
     plt.tight_layout(rect=[0, 0, 1, 0.95 if title else 1.0])
-    if savepath:
-        plt.savefig(savepath)
-    plt.show()
-    plt.close()
