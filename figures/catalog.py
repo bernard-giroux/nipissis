@@ -1,4 +1,4 @@
-from os.path import join, curdir, exists
+from os.path import join, exists
 
 from matplotlib.figure import Figure
 from matplotlib import pyplot as plt
@@ -8,6 +8,18 @@ from inflection import underscore
 
 class Catalog(list):
     dir = 'figures'
+
+    def __getitem__(self, idx):
+        if isinstance(idx, str):
+            try:
+                idx = self.filenames.index(idx)
+            except ValueError:
+                raise ValueError(f"Figure `{idx}` is not registered.")
+        return super().__getitem__(idx)
+
+    @property
+    def filenames(self):
+        return [figure.filename.split('.')[0] for figure in self]
 
     def register(self, figure):
         if type(figure) is type:
@@ -19,6 +31,15 @@ class Catalog(list):
         for figure in self:
             figure.generate()
             figure.save(show=show)
+
+    def regenerate(self, idx):
+        figure = self[idx]
+        metadata = figure.Metadata(figure.filepath)
+        metadata.generate()
+
+    def regenerate_all(self):
+        for i in range(self):
+            self.regenerate(i)
 
 
 class Metadata(File):
