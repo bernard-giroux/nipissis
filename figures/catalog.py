@@ -23,10 +23,11 @@ class Catalog(list):
 class Metadata(File):
     def __init__(self, path, *args, **kwargs):
         path = '.'.join(path.split('.')[:-1])  # Remove extension.
-        self.path = path + '.meta'
-        if not exists(self.path):
+        path = path + '.meta'
+        is_not_generated = not exists(path)
+        super().__init__(path, 'a', *args, **kwargs)
+        if is_not_generated:
             self.generate()
-        super().__init__(path, 'r+', *args, **kwargs)
 
     def generate(self):
         raise NotImplementedError
