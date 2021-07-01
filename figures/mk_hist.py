@@ -81,13 +81,16 @@ def get_spectrum(traces, sample_rates):
     return f, data
 
 
+def gauss(x, p):
+    mean, std, scale = p
+    return scale / (std*np.sqrt(2*np.pi)) * np.exp(-(x-mean)**2/(2*std**2))
+
+
+def errfunc(p, x, y):
+    return gauss(x, p) - y  # Distance to the target function
+
+
 def fwhm(y):
-    def gauss(x, p):  # p[0]==mean, p[1]==stdev
-        return 1.0/(p[1]*np.sqrt(2*np.pi))*np.exp(-(x-p[0])**2/(2*p[1]**2))*p[2]
-
-    def errfunc(p, x, y):
-        return gauss(x, p) - y  # Distance to the target function
-
     x = np.arange(len(y))
     y = y.copy()
     y = np.log10(y)
@@ -97,13 +100,9 @@ def fwhm(y):
     p0 = [len(y)//2, len(y)//2, np.log10(100)]  # Inital guess
     p1, success = opt.leastsq(errfunc, p0, args=(x, y))
 
-    fit_mu, fit_stdev, fit_scale = p1
+    _, fit_std, _ = p1
 
-    fwhm = 2*np.sqrt(2*np.log(2))*fit_stdev
-    # plt.clf()
-    # plt.scatter(x, y)
-    # plt.plot(x, gauss(x, p1))
-    # plt.show()
+    fwhm = 2 * np.sqrt(2*np.log(2)) * fit_std
     return fwhm
 
 
