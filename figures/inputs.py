@@ -59,7 +59,7 @@ class Distance(Figure):
         plt.tight_layout(rect=[0, 0, 1, 0.95])
 
 
-class Vitesse(Figure):
+class Velocity(Figure):
     Metadata = Inputs
 
     def plot(self, data):
@@ -73,7 +73,7 @@ class Vitesse(Figure):
         plt.tight_layout(rect=[0, 0, 1, 0.95])
 
 
-class Poids(Figure):
+class Weight(Figure):
     Metadata = Inputs
 
     def plot(self, data):
@@ -88,5 +88,5 @@ class Poids(Figure):
 
 
 catalog.register(Distance)
-catalog.register(Vitesse)
-catalog.register(Poids)
+catalog.register(Velocity)
+catalog.register(Weight)
