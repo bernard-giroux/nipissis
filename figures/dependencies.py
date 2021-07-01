@@ -67,11 +67,10 @@ class DistanceDependency(Figure):
             a=a1,
             b=b,
             std=std,
-            xlabel="Distance à la voie ferrée $d$ [m]",
-            ylabel="Contribution de la distance aux vibrations \n"
+            xlabel="Distance to railroad $d$ [m]",
+            ylabel="Contribution of distance to RMS amplitude \n"
                    "$y-\\beta_v v-\\beta_w w$ [mm/s]",
             title="a)",
-            savepath="fig/distance_dependency",
         )
 
 
@@ -90,11 +89,10 @@ class VelocityDependency(Figure):
             a=a2,
             b=b,
             std=std,
-            xlabel=r"Vitesse des trains $v$ [mph]",
-            ylabel="Contribution de la vitesse aux vibrations \n"
+            xlabel=r"Train velocity $v$ [mph]",
+            ylabel="Contribution of velocity to RMS amplitude \n"
                    "$y-\\beta_d d-\\beta_w w$ [mm/s]",
             title="b)",
-            savepath="fig/velocity_dependency",
         )
 
 
@@ -113,11 +111,10 @@ class WeightDependency(Figure):
             a=a3,
             b=b,
             std=std,
-            xlabel="Poids des trains $w$ [tonnes]",
-            ylabel="Contribution du poids aux vibrations \n"
+            xlabel="Train weight $w$ [tonnes]",
+            ylabel="Contribution of weight to RMS amplitude \n"
                    "$y-\\beta_d d-\\beta_v v$ [mm/s]",
             title="c)",
-            savepath="fig/weight_dependency",
         )
 
 
@@ -138,12 +135,11 @@ class Parameters(Figure):
             units=[
                 "\\frac{mm}{s \\cdot m}",
                 "\\frac{mm}{m}",
-                "\\frac{mm}{s \\cdot tonnes}",
+                "\\frac{mm}{s \\cdot tons}",
                 "\\frac{mm}{s}",
                 "\\frac{mm}{s}",
             ],
             title="d)",
-            savepath="fig/params",
         )
 
 

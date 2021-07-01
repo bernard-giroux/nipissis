@@ -50,8 +50,8 @@ class Distance(Figure):
 
     def plot(self, data):
         plt.scatter(data["Distance"], data["RMS"], s=12, c="k")
-        plt.xlabel("Distance [m]")
-        plt.ylabel("Amplitude des vibrations [mm/s]")
+        plt.xlabel("Distance to railroad [m]")
+        plt.ylabel("RMS amplitude [mm/s]")
         plt.suptitle("a)")
         plt.grid(True, which='major', color='k', alpha=.35)
         plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
@@ -64,8 +64,8 @@ class Vitesse(Figure):
 
     def plot(self, data):
         plt.scatter(data["MPH"], data["RMS"], s=12, c="k")
-        plt.xlabel("Vitesse [mph]")
-        plt.ylabel("Amplitude des vibrations [mm/s]")
+        plt.xlabel("Train velocity [mph]")
+        plt.ylabel("RMS amplitude [mm/s]")
         plt.suptitle("b)")
         plt.grid(True, which='major', color='k', alpha=.35)
         plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
@@ -78,8 +78,8 @@ class Poids(Figure):
 
     def plot(self, data):
         plt.scatter(data["Poids"], data["RMS"], s=12, c="k")
-        plt.xlabel("Poids [tonnes]")
-        plt.ylabel("Amplitude des vibrations [mm/s]")
+        plt.xlabel("Train weight [tonnes]")
+        plt.ylabel("RMS amplitude [mm/s]")
         plt.suptitle("c)")
         plt.grid(True, which='major', color='k', alpha=.35)
         plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
