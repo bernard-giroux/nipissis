@@ -10,7 +10,7 @@ from catalog import catalog, Figure, Metadata
 DISTANCES_SITES = {0: 93.02, 1: 739.80, 2: 537.42}
 
 
-class Metadata(Metadata):
+class Inputs(Metadata):
     def generate(self):
         data = pd.read_excel('donnees_ironore.xlsx')
 
@@ -46,7 +46,7 @@ class Metadata(Metadata):
 
 
 class Distance(Figure):
-    Metadata = Metadata
+    Metadata = Inputs
 
     def plot(self, data):
         plt.scatter(data["Distance"], data["RMS"], s=12, c="k")
@@ -60,7 +60,7 @@ class Distance(Figure):
 
 
 class Vitesse(Figure):
-    Metadata = Metadata
+    Metadata = Inputs
 
     def plot(self, data):
         plt.scatter(data["MPH"], data["RMS"], s=12, c="k")
@@ -74,7 +74,7 @@ class Vitesse(Figure):
 
 
 class Poids(Figure):
-    Metadata = Metadata
+    Metadata = Inputs
 
     def plot(self, data):
         plt.scatter(data["Poids"], data["RMS"], s=12, c="k")

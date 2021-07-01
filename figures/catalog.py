@@ -24,7 +24,6 @@ class Catalog(list):
     def register(self, figure):
         if type(figure) is type:
             figure = figure()
-        figure.reldir = join(self.dir, figure.reldir)
         self.append(figure)
 
     def draw_all(self, show=True):
@@ -34,7 +33,7 @@ class Catalog(list):
 
     def regenerate(self, idx):
         figure = self[idx]
-        metadata = figure.Metadata(figure.filepath)
+        metadata = figure.Metadata()
         metadata.generate()
 
     def regenerate_all(self):
@@ -43,11 +42,19 @@ class Catalog(list):
 
 
 class Metadata(File):
-    def __init__(self, path, *args, **kwargs):
-        path = '.'.join(path.split('.')[:-1])  # Remove extension.
-        path = path + '.meta'
-        is_not_generated = not exists(path)
-        super().__init__(path, 'a', *args, **kwargs)
+    @property
+    def filename(self):
+        filename = underscore(type(self).__name__)
+        filename = filename.strip('_')
+        return filename + '.meta'
+
+    @property
+    def filepath(self):
+        return join(Catalog.dir, self.filename)
+
+    def __init__(self, *args, **kwargs):
+        is_not_generated = not exists(self.filepath)
+        super().__init__(self.filepath, 'a', *args, **kwargs)
         if is_not_generated:
             self.generate()
 
@@ -64,7 +71,6 @@ class Metadata(File):
 
 class Figure(Figure):
     Metadata = Metadata
-    reldir = ""
 
     @property
     def filename(self):
@@ -73,10 +79,10 @@ class Figure(Figure):
 
     @property
     def filepath(self):
-        return join(self.reldir, self.filename)
+        return join(Catalog.dir, self.filename)
 
     def generate(self, *args, **kwargs):
-        with self.Metadata(self.filepath) as data:
+        with self.Metadata() as data:
             self.plot(data)
 
     def save(self, show=True):
