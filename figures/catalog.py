@@ -6,18 +6,16 @@ from h5py import File
 
 
 class Catalog(list):
-    def __init__(self, *args, figures_dir=curdir):
-        self.figures_dir = figures_dir
-        super().__init__(*args)
+    dir = curdir
 
     def register(self, figure):
-        figure.reldir = join(self.figures_dir, figure.reldir)
+        figure.reldir = join(self.dir, figure.reldir)
         self.append(figure)
 
     def draw_all(self):
         for figure in self:
             figure.draw()
-            figure.save(figures_dir=self.figures_dir)
+            figure.save(figures_dir=self.dir)
 
 
 class Metadata(File):
