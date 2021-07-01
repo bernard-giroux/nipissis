@@ -81,7 +81,7 @@ class Figure(Figure):
     def filepath(self):
         return join(Catalog.dir, self.filename)
 
-    def generate(self, *args, **kwargs):
+    def generate(self):
         with self.Metadata() as data:
             self.plot(data)
 
