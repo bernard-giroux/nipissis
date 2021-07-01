@@ -15,10 +15,10 @@ class Catalog(list):
         figure.reldir = join(self.dir, figure.reldir)
         self.append(figure)
 
-    def draw_all(self):
+    def draw_all(self, show=True):
         for figure in self:
             figure.generate()
-            figure.save()
+            figure.save(show=show)
 
 
 class Metadata(File):
@@ -58,9 +58,10 @@ class Figure(Figure):
         with self.Metadata(self.filepath) as data:
             self.plot(data)
 
-    def save(self):
+    def save(self, show=True):
         plt.savefig(self.filepath)
-        plt.show()
+        if show:
+            plt.show()
         plt.close()
 
     def plot(self, data):
