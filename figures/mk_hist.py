@@ -5,19 +5,19 @@ import os
 from os import mkdir
 from os.path import exists
 import pickle
+import warnings
+
 from scipy import signal
 from scipy import optimize as opt
-
 import numpy as np
 import pandas as pd
 import obspy
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 from common_nipissis import root_dir, sensitivity_g, sensitivity_h, rms
-import warnings
+
 warnings.simplefilter("ignore")
 
 LEN_FILE = 16000
