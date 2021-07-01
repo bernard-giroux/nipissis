@@ -43,9 +43,6 @@ class Figure(Figure):
     Metadata = Metadata
     reldir = ""
 
-    def __init__(self, metadata, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     @property
     def filename(self):
         return type(self).__name__ + '.pdf'
