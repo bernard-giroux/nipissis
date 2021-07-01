@@ -7,7 +7,7 @@ from inflection import underscore
 
 
 class Catalog(list):
-    dir = curdir
+    dir = 'figures'
 
     def register(self, figure):
         if type(figure) is type:
@@ -17,8 +17,8 @@ class Catalog(list):
 
     def draw_all(self):
         for figure in self:
-            figure.draw()
-            figure.save(figures_dir=self.dir)
+            figure.generate()
+            figure.save()
 
 
 class Metadata(File):
@@ -54,10 +54,9 @@ class Figure(Figure):
     def filepath(self):
         return join(self.reldir, self.filename)
 
-    def draw(self, *args, **kwargs):
+    def generate(self, *args, **kwargs):
         with self.Metadata(self.filepath) as data:
             self.plot(data)
-            super().draw(*args, **kwargs)
 
     def save(self):
         plt.savefig(self.filepath)
