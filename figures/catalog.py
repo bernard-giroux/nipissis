@@ -3,6 +3,7 @@ from os.path import join, curdir, exists
 from matplotlib.figure import Figure
 from matplotlib import pyplot as plt
 from h5py import File
+from inflection import underscore
 
 
 class Catalog(list):
@@ -46,7 +47,7 @@ class Figure(Figure):
 
     @property
     def filename(self):
-        return type(self).__name__ + '.pdf'
+        return underscore(type(self).__name__) + '.pdf'
         # return catalog.index(self)
 
     @property
