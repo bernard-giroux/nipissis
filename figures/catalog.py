@@ -9,6 +9,8 @@ class Catalog(list):
     dir = curdir
 
     def register(self, figure):
+        if type(figure) is type:
+            figure = figure()
         figure.reldir = join(self.dir, figure.reldir)
         self.append(figure)
 
