@@ -258,14 +258,13 @@ class HistogramAmplitudes(Figure):
     def plot(self, data):
         plt.rcParams["font.family"] = "serif"
         max_rms_amplitudes = data["max_rms"]
-        max_rms_amplitudes_temp = np.sort(max_rms_amplitudes)[:-1]
         # Maximum 24-channel mean RMS amplitude [mm/s].
         # Mean over 8 minutes.
         # Maximum over train passage.
-        print(f"Minimum: {np.min(max_rms_amplitudes_temp)}")
-        print(f"Percentile 33: {np.percentile(max_rms_amplitudes_temp, 33)}")
-        print(f"Percentile 66: {np.percentile(max_rms_amplitudes_temp, 66)}")
-        print(f"Maximum: {np.max(max_rms_amplitudes_temp)}")
+        print(f"Minimum: {np.min(max_rms_amplitudes)}")
+        print(f"Percentile 33: {np.percentile(max_rms_amplitudes, 33)}")
+        print(f"Percentile 66: {np.percentile(max_rms_amplitudes, 66)}")
+        print(f"Maximum: {np.max(max_rms_amplitudes)}")
         plt.hist(max_rms_amplitudes, bins=20, color='tab:gray')
         plt.xticks(range(0, 275, 25))
         plt.xlabel("Vibration magnitude (mm/s)")
