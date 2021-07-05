@@ -97,10 +97,6 @@ class Figure(Figure):
             self.plot(data)
 
     def save(self, show=True):
-        plt.grid(True, which='major', color='k', alpha=.35)
-        plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
-        plt.minorticks_on()
-        plt.tight_layout()
         plt.savefig(self.filepath)
         if show:
             plt.show()
