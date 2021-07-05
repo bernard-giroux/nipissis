@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 
 from figures import *
+from figures.mk_hist import Site_rms
 from catalog import catalog
 
 
