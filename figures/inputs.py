@@ -3,7 +3,6 @@
 import pickle as pkl
 
 import pandas as pd
-from matplotlib import pyplot as plt
 import proplot as pplt
 
 from catalog import catalog, Figure, Metadata
