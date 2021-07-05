@@ -4,13 +4,14 @@ import pickle as pkl
 
 import pandas as pd
 from matplotlib import pyplot as plt
+import proplot as pplt
 
 from catalog import catalog, Figure, Metadata
 
 DISTANCES_SITES = {0: 93.02, 1: 739.80, 2: 537.42}
 
 
-class Inputs(Metadata):
+class Inputs_(Metadata):
     def generate(self):
         data = pd.read_excel('donnees_ironore.xlsx')
 
@@ -45,48 +46,32 @@ class Inputs(Metadata):
             self[column] = data[column].values
 
 
-class Distance(Figure):
-    Metadata = Inputs
+class Inputs(Figure):
+    Metadata = Inputs_
 
     def plot(self, data):
-        plt.scatter(data["Distance"], data["RMS"], s=12, c="k")
-        plt.xlabel("Distance to railroad [m]")
-        plt.ylabel("RMS amplitude [mm/s]")
-        plt.suptitle("a)")
-        plt.grid(True, which='major', color='k', alpha=.35)
-        plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
-        plt.minorticks_on()
-        plt.tight_layout(rect=[0, 0, 1, 0.95])
+        _, axs = pplt.subplots(
+            [[1, 1, 2, 2], [0, 3, 3, 0]],
+            figsize=[7.66, 7.66],
+            sharey=True,
+            sharex=False,
+        )
+        axs.format(
+            ylabel="RMS amplitude (mm/s)",
+            grid=True,
+            gridminor=True,
+        )
+        labels = [
+            "Distance to railroad (m)",
+            "Train velocity (mph)",
+            "Train weight (tons)",
+        ]
+        x = data["RMS"]
+        for y, label, ax in zip(
+            [data["Distance"], data["MPH"], data["Poids"]], labels, axs,
+        ):
+            ax.scatter(y, x, color="k", size=12)
+            ax.format(abc=True, xlabel=label, ylim=[0, None])
 
 
-class Velocity(Figure):
-    Metadata = Inputs
-
-    def plot(self, data):
-        plt.scatter(data["MPH"], data["RMS"], s=12, c="k")
-        plt.xlabel("Train velocity [mph]")
-        plt.ylabel("RMS amplitude [mm/s]")
-        plt.suptitle("b)")
-        plt.grid(True, which='major', color='k', alpha=.35)
-        plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
-        plt.minorticks_on()
-        plt.tight_layout(rect=[0, 0, 1, 0.95])
-
-
-class Weight(Figure):
-    Metadata = Inputs
-
-    def plot(self, data):
-        plt.scatter(data["Poids"], data["RMS"], s=12, c="k")
-        plt.xlabel("Train weight [tonnes]")
-        plt.ylabel("RMS amplitude [mm/s]")
-        plt.suptitle("c)")
-        plt.grid(True, which='major', color='k', alpha=.35)
-        plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
-        plt.minorticks_on()
-        plt.tight_layout(rect=[0, 0, 1, 0.95])
-
-
-catalog.register(Distance)
-catalog.register(Velocity)
-catalog.register(Weight)
+catalog.register(Inputs)
