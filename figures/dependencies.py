@@ -233,6 +233,9 @@ class Dependencies(Figure):
         axs[-1].set_xscale('log')
         # axs[-1].set_xticks([2E1, 6E1], [2E1, 6E1])
 
+        ticks = axs[2].get_xticks()
+        axs[2].set_xticks(ticks[1::2])
+
         axs[:4].format(abc=True)
 
 

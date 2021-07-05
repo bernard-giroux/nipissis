@@ -71,6 +71,8 @@ class Inputs(Figure):
         ):
             ax.scatter(y, x, color="k", size=12)
             ax.format(abc=True, xlabel=label, ylim=[0, None])
+        ticks = axs[2].get_xticks()
+        axs[2].set_xticks(ticks[1::2])
 
 
 catalog.register(Inputs)
