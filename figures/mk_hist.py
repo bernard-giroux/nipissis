@@ -278,7 +278,7 @@ class HistogramTimes(Figure):
     def plot(self, data):
         plt.rcParams["font.family"] = "serif"
         fwhm_time = data["fwhm"]
-        fwhm_temp = np.sort(fwhm_time)[:-2]
+        fwhm_temp = np.sort(fwhm_time)[:-1]
         print("PASSAGE TIME STATISTICS")
         print(f"Minimum: {min(fwhm_temp)}")
         print(f"Maximum: {max(fwhm_temp)}")
