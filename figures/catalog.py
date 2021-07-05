@@ -38,7 +38,7 @@ class Catalog(list):
         metadata.generate()
 
     def regenerate_all(self):
-        for i in range(self):
+        for i in range(len(self)):
             self.regenerate(i)
 
     def clear_all(self):
