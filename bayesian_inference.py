@@ -118,9 +118,9 @@ def gaussian_fill_between(a, b, std, xlim=None, ylim=None):
     x, y = np.meshgrid(np.linspace(*xlim, 1000), np.linspace(*ylim, 1000))
     fill_between = gaussian(y, a*x + b, std)
 
-    tab_blue = mpl.colors.to_rgb(mpl.colors.BASE_COLORS["k"])
+    color = mpl.colors.to_rgb(mpl.colors.BASE_COLORS["k"])
     alpha = np.linspace(0, .3, 1000)
-    cmap = mpl.colors.ListedColormap([[*tab_blue, a] for a in alpha])
+    cmap = mpl.colors.ListedColormap([[*color, a] for a in alpha])
     plt.imshow(
         fill_between,
         origin="lower",
@@ -130,8 +130,7 @@ def gaussian_fill_between(a, b, std, xlim=None, ylim=None):
     )
 
 
-def plot_linear_dependency(x, y, a, b, std, xlabel="", ylabel="", title="",
-                           savepath=""):
+def plot_linear_dependency(x, y, a, b, std, xlabel="", ylabel="", savepath=""):
     plt.scatter(x, y, s=12, c="k")
     extend = x.max() - x.min()
     x_line = np.linspace(x.min()-extend, x.max()+extend, 2)
@@ -141,46 +140,26 @@ def plot_linear_dependency(x, y, a, b, std, xlabel="", ylabel="", title="",
     plt.plot(x_line, line, ls='--', c="k")
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.suptitle(title)
-    plt.tight_layout(rect=[0, 0, 1, 0.95 if title else 1.0])
-    plt.grid(True, which='major', color='k', alpha=.35)
-    plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
-    plt.minorticks_on()
 
 
-def plot_parameters(vars, var_names, probs_mar, units=None, title="",
-                    savepath=""):
-    plt.figure(figsize=(12, 8))
-    gs = mpl.gridspec.GridSpec(1, len(var_names))
-    axes = list()
-    for i in np.arange(len(var_names)):
-        axes.append(plt.subplot(gs[i]))
-
-    axes[0].set_ylabel(
-        "Probabilité marginale normalisée "
-        "$\\frac{p(\\theta)}{p_{max}(\\theta)}$"
-    )
-
+def plot_parameters(vars, var_names, probs_mar, axes, units=None):
     for i, (var, name) in enumerate(zip(vars, var_names)):
         ax = axes[i]
-        width = np.diff(var)
         probs_mar_ = probs_mar[i] / probs_mar[i].max()
-        print(name, 2*weighted_std(var, probs_mar_))
-        ax.bar(var, probs_mar_, [*width, width[-1]], color=[.3, .3, .3])
-        ax.grid(True, which='major', color='k', alpha=.1)
-        ax.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
-        ax.minorticks_on()
+        print(
+            f"Standard deviation for {name}:", weighted_std(var, probs_mar_)
+        )
+        color = [.3] * 3
+        ax.fill_between(
+            var,
+            0,
+            probs_mar_,
+            color=color,
+        )
         if units is not None:
             unit = units[i]
-            name = f"{name} $\\left[{unit}\\right]$"
+            name = f"{name} $\\left({unit}\\right)$"
         ax.set_xlabel(name)
-        if i == len(vars) - 1:
-            ax.get_xaxis().set_ticklabels([])
-            ax.set_xscale('log')
-            ax.set_xticks([2E1, 6E1], [2E1, 6E1])
         if i > 0:
             ax.get_yaxis().set_ticklabels([])
         ax.tick_params(direction='in', which="both", right=1, top=0)
-
-    plt.suptitle(title)
-    plt.tight_layout(rect=[0, 0, 1, 0.95 if title else 1.0])
