@@ -111,13 +111,9 @@ plt.rcParams['legend.columnspacing'] = 2.0  # column separation
 
 # FIGURE
 plt.rcParams['figure.titlesize'] = "large"  # size of `Figure.suptitle()`
-plt.rcParams['figure.titleweight'] = "normal"  # weight of the figure title
+plt.rcParams['figure.titleweight'] =  "normal"  # weight of the figure title
 plt.rcParams['figure.figsize'] = [12, 6]  # figure size in inches
 plt.rcParams['figure.dpi'] = 100  # figure dots per inch
 plt.rcParams['figure.facecolor'] = "white"  # figure facecolor
 plt.rcParams['figure.edgecolor'] = "white"  # figure edgecolor
 plt.rcParams['figure.autolayout'] = False  # automatically adjust subplot.
-
-
-if __name__ == '__main__':
-    clear_figures()
