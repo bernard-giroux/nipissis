@@ -2,38 +2,7 @@
 
 """Custom Matplotlib plot format."""
 
-from os import listdir, remove
-from os.path import join, curdir
-
 from matplotlib import pyplot as plt
-
-FIGURES_DIR = curdir
-
-
-def clear_figures():
-    for filename in listdir(FIGURES_DIR):
-        extension = filename.split('.')[-1]
-        if extension == 'png':
-            remove(join(FIGURES_DIR, filename))
-
-
-def format_plot(show=False):
-    plt.grid(True, which='major', color='k', alpha=.35)
-    plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
-    plt.minorticks_on()
-    plt.tight_layout()
-    if show:
-        plt.show()
-
-
-def format_save_plot(title="", show=True):
-    format_plot()
-    if title:
-        plt.savefig(join(FIGURES_DIR, title + '.png'))
-    if show:
-        plt.show()
-    else:
-        plt.clf()
 
 
 plt.rc('text', usetex=True)
@@ -47,7 +16,6 @@ plt.rcParams['font.variant'] = "normal"
 plt.rcParams['font.weight'] = "medium"
 plt.rcParams['font.stretch'] = "normal"
 plt.rcParams['font.size'] = 24
-plt.rcParams['font.sans-serif'] = "Times New Roman"
 # plt.rcParams['font.serif'] = (
 #     DejaVu Serif, Bitstream Vera Serif, New Century Schoolbook,
 #     Century Schoolbook L, Utopia, ITC Bookman, Bookman, Nimbus Roman No9 L,

@@ -1,3 +1,4 @@
+from os import listdir, remove
 from os.path import join, exists
 
 from matplotlib.figure import Figure
@@ -39,6 +40,12 @@ class Catalog(list):
     def regenerate_all(self):
         for i in range(self):
             self.regenerate(i)
+
+    def clear_all(self):
+        for filename in listdir(self.dir):
+            extension = filename.split('.')[-1]
+            if extension in ['pdf', 'meta']:
+                remove(join(self.dir, filename))
 
 
 class Metadata(File):
@@ -90,9 +97,15 @@ class Figure(Figure):
             self.plot(data)
 
     def save(self, show=True):
+        plt.grid(True, which='major', color='k', alpha=.35)
+        plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
+        plt.minorticks_on()
+        plt.tight_layout()
         plt.savefig(self.filepath)
         if show:
             plt.show()
+        else:
+            plt.clf()
         plt.close()
 
     def plot(self, data):
