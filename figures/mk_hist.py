@@ -261,6 +261,7 @@ class HistogramAmplitudes(Figure):
         # Maximum 24-channel mean RMS amplitude [mm/s].
         # Mean over 8 minutes.
         # Maximum over train passage.
+        print("AMPLITUDE STATISTICS")
         print(f"Minimum: {np.min(max_rms_amplitudes)}")
         print(f"Percentile 33: {np.percentile(max_rms_amplitudes, 33)}")
         print(f"Percentile 66: {np.percentile(max_rms_amplitudes, 66)}")
@@ -278,8 +279,9 @@ class HistogramTimes(Figure):
         plt.rcParams["font.family"] = "serif"
         fwhm_time = data["fwhm"]
         fwhm_temp = np.sort(fwhm_time)[:-2]
-        print(f"Min: {min(fwhm_temp)}")
-        print(f"Max: {max(fwhm_temp)}")
+        print("PASSAGE TIME STATISTICS")
+        print(f"Minimum: {min(fwhm_temp)}")
+        print(f"Maximum: {max(fwhm_temp)}")
         print(f"Mean: {np.mean(fwhm_temp)}")
         print(f"Median: {np.median(fwhm_temp)}")
         print(f"Std: {np.std(fwhm_temp)}")
