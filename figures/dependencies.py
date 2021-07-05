@@ -14,10 +14,10 @@ class Dependencies(Inputs):
         super().generate()
         print(self.keys())
 
-        rms = self["RMS"][:]
-        distance = self["Distance"][:]
-        velocity = self["MPH"][:]
-        poids = self["Poids"][:]
+        rms = self["RMS"]
+        distance = self["Distance"]
+        velocity = self["MPH"]
+        poids = self["Poids"]
 
         STEPS = 24  # NOTE Reduce step size to make computations faster.
 
@@ -56,11 +56,11 @@ class DistanceDependency(Figure):
     Metadata = Dependencies
 
     def plot(self, data):
-        rms = data["RMS"][:]
-        distance = data["Distance"][:]
-        velocity = data["MPH"][:]
-        poids = data["Poids"][:]
-        a1, a2, a3, b, std = data["vars_max"][:]
+        rms = data["RMS"]
+        distance = data["Distance"]
+        velocity = data["MPH"]
+        poids = data["Poids"]
+        a1, a2, a3, b, std = data["vars_max"]
         plot_linear_dependency(
             distance,
             rms-a2*velocity-a3*poids,
@@ -78,11 +78,11 @@ class VelocityDependency(Figure):
     Metadata = Dependencies
 
     def plot(self, data):
-        rms = data["RMS"][:]
-        distance = data["Distance"][:]
-        velocity = data["MPH"][:]
-        poids = data["Poids"][:]
-        a1, a2, a3, b, std = data["vars_max"][:]
+        rms = data["RMS"]
+        distance = data["Distance"]
+        velocity = data["MPH"]
+        poids = data["Poids"]
+        a1, a2, a3, b, std = data["vars_max"]
         plot_linear_dependency(
             velocity,
             rms-a1*distance-a3*poids,
@@ -100,11 +100,11 @@ class WeightDependency(Figure):
     Metadata = Dependencies
 
     def plot(self, data):
-        rms = data["RMS"][:]
-        distance = data["Distance"][:]
-        velocity = data["MPH"][:]
-        poids = data["Poids"][:]
-        a1, a2, a3, b, std = data["vars_max"][:]
+        rms = data["RMS"]
+        distance = data["Distance"]
+        velocity = data["MPH"]
+        poids = data["Poids"]
+        a1, a2, a3, b, std = data["vars_max"]
         plot_linear_dependency(
             poids,
             rms-a1*distance-a2*velocity,
@@ -122,12 +122,12 @@ class Parameters(Figure):
     Metadata = Dependencies
 
     def plot(self, data):
-        vars = data["vars"][:]
+        vars = data["vars"]
         var_names = [
             r"$\beta_d$", r"$\beta_v$", r"$\beta_w$", r"$y_0$",
             r"$\sigma_\epsilon$",
         ]
-        probs_mar = data["probs_mar"][:]
+        probs_mar = data["probs_mar"]
         plot_parameters(
             vars,
             var_names,

@@ -226,11 +226,11 @@ class SampleData(Figure):
         locator = mdates.AutoDateLocator(minticks=10, maxticks=20)
         formatter = mdates.ConciseDateFormatter(locator)
 
-        rms_val = data["rms_0"][:]
+        rms_val = data["rms_0"]
         to_plot_rms = rms_val.reshape([-1, 24])
         to_plot_rms = to_plot_rms.mean(axis=1)
 
-        starttime, endtime = data["passage_0"][:]
+        starttime, endtime = data["passage_0"]
         starttime = datetime.fromtimestamp(starttime)
         endtime = datetime.fromtimestamp(endtime)
 
@@ -276,7 +276,7 @@ class HistogramTimes(Figure):
 
     def plot(self, data):
         plt.rcParams["font.family"] = "serif"
-        fwhm_time = data["fwhm"][:]
+        fwhm_time = data["fwhm"]
         fwhm_temp = np.sort(fwhm_time)[:-2]
         print(f"Min: {min(fwhm_temp)}")
         print(f"Max: {max(fwhm_temp)}")

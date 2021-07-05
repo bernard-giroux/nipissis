@@ -68,6 +68,10 @@ class Metadata(File):
             pass
         super().__setitem__(key, value)
 
+    def __getitem__(self, key):
+        value = super().__getitem__(key)
+        return value[:]
+
 
 class Figure(Figure):
     Metadata = Metadata
