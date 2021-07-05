@@ -113,7 +113,6 @@ class Location(Figure):
     def plot(self, data):
         railway = data["railway"]
         geophones = data["geophones"]
-        # hydrophones = data["hydrophones"]
         distances = data["distances"]
         satellite = data["satellite"]
 
@@ -132,7 +131,6 @@ class Location(Figure):
             c='tab:orange',
             label="Geophones",
         )
-        # plt.scatter(*hydrophones.T[:2], s=.5, c='tab:blue')
         extent = [*plt.xlim(), *plt.ylim()]
         plt.imshow(satellite, zorder=-1, extent=extent)
         plt.gca().set_aspect('equal')
@@ -141,6 +139,8 @@ class Location(Figure):
             ticks(loc[1::2])
         plt.xlabel("Easting (UTM)")
         plt.ylabel("Northing (UTM)")
+        plt.xlim([705800, 707800])
+        plt.ylim([5597200, 5601000])
         plt.legend(loc='lower right')
 
 
