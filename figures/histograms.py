@@ -223,7 +223,7 @@ class SampleData(Figure):
     Metadata = Histograms
 
     def plot(self, data):
-        locator = mdates.AutoDateLocator(minticks=10, maxticks=20)
+        locator = mdates.AutoDateLocator(minticks=1, maxticks=10)
         formatter = mdates.ConciseDateFormatter(locator)
 
         rms_val = data["rms_0"]
@@ -239,12 +239,40 @@ class SampleData(Figure):
             endtime,
             periods=len(to_plot_rms),
         )
-        plt.plot_date(time, to_plot_rms, ms=6, c='k', ls='-')
-        plt.xlabel("Time")
+        plt.figure(figsize=[4.33, 3])
+        plt.plot_date(time, to_plot_rms, ms=2, c='k', ls='-')
         plt.gcf().autofmt_xdate()
         plt.gca().xaxis.set_major_locator(locator)
         plt.gca().xaxis.set_major_formatter(formatter)
-        plt.ylabel("Average RMS amplitude [mm/s]")
+
+        idx_max = np.argmax(to_plot_rms)
+        x_max = time[idx_max]
+        y_max = to_plot_rms[idx_max]
+        plt.plot_date(
+            [time[0], x_max],
+            [y_max, y_max],
+            ms=0,
+            ls='--',
+            c='k',
+        )
+        plt.text(time.min(), y_max, "Maximum", ha='left', va='top')
+        DIFF_IDX = 20
+        x = time[DIFF_IDX:DIFF_IDX+1].mean()
+        y = to_plot_rms[DIFF_IDX:DIFF_IDX+1].mean()
+        DT = 1 / 5
+        plt.annotate(
+            "8 seconds",
+            [x, y*.95],
+            [0, -16],
+            ha='center',
+            va='top',
+            arrowprops={'arrowstyle': f'-[, widthB={DT}, lengthB=.2'},
+            textcoords='offset points',
+        )
+
+        plt.xlabel("Time")
+        plt.ylabel("Average RMS amplitude (mm/s)")
+        plt.xlim([time.min(), time.max()])
         plt.grid(True, which='major', color='k', alpha=.35)
         plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
         plt.minorticks_on()
@@ -266,7 +294,7 @@ class HistogramAmplitudes(Figure):
         print(f"Percentile 33: {np.percentile(max_rms_amplitudes, 33)}")
         print(f"Percentile 66: {np.percentile(max_rms_amplitudes, 66)}")
         print(f"Maximum: {np.max(max_rms_amplitudes)}")
-        plt.hist(max_rms_amplitudes, bins=20, color='tab:gray')
+        plt.hist(max_rms_amplitudes, bins=20, color=[.3]*3)
         plt.xticks(range(0, 275, 25))
         plt.xlabel("Vibration magnitude (mm/s)")
         plt.ylabel("Count")
@@ -285,7 +313,7 @@ class HistogramTimes(Figure):
         print(f"Mean: {np.mean(fwhm_temp)}")
         print(f"Median: {np.median(fwhm_temp)}")
         print(f"Std: {np.std(fwhm_temp)}")
-        plt.hist(fwhm_temp, bins=30, color='tab:gray')
+        plt.hist(fwhm_temp, bins=30, color=[.3]*3)
         plt.xlabel("Passage duration (min)")
         plt.ylabel("Count")
 
