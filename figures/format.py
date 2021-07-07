@@ -112,7 +112,7 @@ plt.rcParams['legend.columnspacing'] = 2.0  # column separation
 # FIGURE
 plt.rcParams['figure.titlesize'] = "large"  # size of `Figure.suptitle()`
 plt.rcParams['figure.titleweight'] = "normal"  # weight of the figure title
-plt.rcParams['figure.figsize'] = [12, 6]  # figure size in inches
+plt.rcParams['figure.figsize'] = [4.33, 3]  # figure size in inches
 plt.rcParams['figure.dpi'] = 1000  # figure dots per inch
 plt.rcParams['figure.facecolor'] = "white"  # figure facecolor
 plt.rcParams['figure.edgecolor'] = "white"  # figure edgecolor
