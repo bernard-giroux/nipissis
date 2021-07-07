@@ -273,7 +273,7 @@ class SampleData(Figure):
 
         ax.format(
             xlabel="Time",
-            ylabel="Average RMS amplitude (mm/s)",
+            ylabel=r"Average RMS amplitude ($\frac{\mathrm{mm}}{\mathrm{s}}$)",
             xlim=[time.min(), time.max()],
             ylim=[plt.ylim()[0], 1.25*plt.ylim()[1]],
             xrotation=0,
@@ -288,7 +288,7 @@ class HistogramAmplitudes(Figure):
     def plot(self, data):
         plt.rcParams["font.family"] = "serif"
         max_rms_amplitudes = data["max_rms"]
-        # Maximum 24-channel mean RMS amplitude [mm/s].
+        # Maximum 24-channel mean RMS amplitude (mm/s).
         # Mean over 8 minutes.
         # Maximum over train passage.
         print("AMPLITUDE STATISTICS")
@@ -298,7 +298,7 @@ class HistogramAmplitudes(Figure):
         print(f"Maximum: {np.max(max_rms_amplitudes)}")
         plt.hist(max_rms_amplitudes, bins=20, color=[.3]*3)
         plt.xticks(range(0, 275, 25))
-        plt.xlabel("Vibration magnitude (mm/s)")
+        plt.xlabel(r"Vibration magnitude ($\frac{\mathrm{mm}}{\mathrm{s}}$)")
         plt.ylabel("Count")
 
 

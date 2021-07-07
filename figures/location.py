@@ -122,7 +122,7 @@ class Location(Figure):
             print(np.mean(distances[start:end]))
 
         with pplt.rc.context(fontfamily='sans-serif'):
-            _, ax = pplt.subplots(figsize=[4.33, 5])
+            _, ax = pplt.subplots(figsize=[3.33, 5])
             ax.plot(
                 *railway.T[:2],
                 c='w',

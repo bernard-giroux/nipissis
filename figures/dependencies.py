@@ -93,11 +93,11 @@ class Dependencies(Figure):
         ]
         ylabels = [
             "Contribution of distance to RMS amplitude \n"
-            "$y-\\beta_v v-\\beta_w w$ (mm/s)",
+            r"$y-\beta_v v-\beta_w w$ ($\frac{\mathrm{mm}}{\mathrm{s}}$)",
             "Contribution of velocity to RMS amplitude \n"
-            "$y-\\beta_d d-\\beta_w w$ (mm/s)",
+            r"$y-\beta_d d-\beta_w w$ ($\frac{\mathrm{mm}}{\mathrm{s}}$)",
             "Contribution of weight to RMS amplitude \n"
-            "$y-\\beta_d d-\\beta_v v$ (mm/s)",
+            r"$y-\beta_d d-\beta_v v$ ($\frac{\mathrm{mm}}{\mathrm{s}}$)",
         ]
 
         for ax, x, y, a, xlabel, ylabel, in zip(
@@ -126,11 +126,11 @@ class Dependencies(Figure):
             probs_mar,
             axes=axs[3:],
             units=[
-                "\\frac{mm}{s \\cdot m}",
-                "\\frac{mm}{m}",
-                "\\frac{mm}{s \\cdot tons}",
-                "\\frac{mm}{s}",
-                "\\frac{mm}{s}",
+                r"\frac{\mathrm{mm}}{\mathrm{s} \cdot \mathrm{m}}",
+                r"\frac{\mathrm{mm}}{\mathrm{m}}",
+                r"\frac{\mathrm{mm}}{\mathrm{s} \cdot \mathrm{tons}}",
+                r"\frac{\mathrm{mm}}{\mathrm{s}}",
+                r"\frac{\mathrm{mm}}{\mathrm{s}}",
             ],
         )
         axs[3].format(
