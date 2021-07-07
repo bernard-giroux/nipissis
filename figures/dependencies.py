@@ -72,12 +72,6 @@ class Dependencies(Figure):
             sharey=False,
             sharex=False,
         )
-        axs.format(
-            grid=True,
-            gridcolor=[.3] * 3,
-            gridminor=True,
-            gridminorcolor=[.1] * 3,
-        )
 
         rms = data["RMS"]
         distance = data["Distance"]

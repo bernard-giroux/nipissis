@@ -1,3 +1,5 @@
+from . import format
+
 from . import inputs
 from . import dependencies
 from . import histograms

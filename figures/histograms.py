@@ -13,6 +13,7 @@ import pandas as pd
 import obspy
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import proplot as pplt
 
 from common_nipissis import root_dir, sensitivity_g, rms
 from catalog import catalog, Figure, Metadata
@@ -239,7 +240,7 @@ class SampleData(Figure):
             endtime,
             periods=len(to_plot_rms),
         )
-        plt.figure(figsize=[4.33, 3])
+        _, ax = pplt.subplots(figsize=[4.33, 3])
         plt.plot_date(time, to_plot_rms, ms=2, c='k', ls='-')
         plt.gcf().autofmt_xdate()
         plt.gca().xaxis.set_major_locator(locator)
@@ -255,7 +256,7 @@ class SampleData(Figure):
             ls='--',
             c='k',
         )
-        plt.text(time.min(), y_max, "Maximum", ha='left', va='top')
+        plt.text(time.min(), y_max, "Maximum", ha='left', va='bottom')
         DIFF_IDX = 20
         x = time[DIFF_IDX:DIFF_IDX+1].mean()
         y = to_plot_rms[DIFF_IDX:DIFF_IDX+1].mean()
@@ -270,13 +271,14 @@ class SampleData(Figure):
             textcoords='offset points',
         )
 
-        plt.xlabel("Time")
-        plt.ylabel("Average RMS amplitude (mm/s)")
-        plt.xlim([time.min(), time.max()])
-        plt.grid(True, which='major', color='k', alpha=.35)
-        plt.grid(True, which='minor', linestyle='--', color='k', alpha=.1)
-        plt.minorticks_on()
-        plt.semilogy()
+        ax.format(
+            xlabel="Time",
+            ylabel="Average RMS amplitude (mm/s)",
+            xlim=[time.min(), time.max()],
+            ylim=[plt.ylim()[0], 1.25*plt.ylim()[1]],
+            xrotation=0,
+            yscale='log',
+        )
         plt.tight_layout()
 
 

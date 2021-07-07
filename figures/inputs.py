@@ -55,11 +55,7 @@ class Inputs(Figure):
             sharey=True,
             sharex=False,
         )
-        axs.format(
-            ylabel="RMS amplitude (mm/s)",
-            grid=True,
-            gridminor=True,
-        )
+        axs.format(ylabel="RMS amplitude (mm/s)")
         labels = [
             "Distance to railroad (m)",
             "Train velocity (mph)",
