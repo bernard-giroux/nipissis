@@ -6,6 +6,7 @@
 *.txt
 *.dat
 *.csv
+*.meta
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
