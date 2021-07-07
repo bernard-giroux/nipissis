@@ -7,6 +7,7 @@ import pyproj
 import numpy as np
 from numpy.linalg import norm
 from matplotlib import pyplot as plt
+import proplot as pplt
 
 from catalog import catalog, Metadata, Figure
 
@@ -120,28 +121,34 @@ class Location(Figure):
         for start, end in [[0, 24], [24, 48], [48, 72]]:
             print(np.mean(distances[start:end]))
 
-        plt.plot(
-            *railway.T[:2],
-            c='w',
-            label="Railway",
-        )
-        plt.scatter(
-            *geophones.T[:2],
-            s=.5,
-            c='tab:orange',
-            label="Geophones",
-        )
-        extent = [*plt.xlim(), *plt.ylim()]
-        plt.imshow(satellite, zorder=-1, extent=extent)
-        plt.gca().set_aspect('equal')
-        for ticks in [plt.xticks, plt.yticks]:
-            loc, _ = ticks()
-            ticks(loc[1::2])
-        plt.xlabel("Easting (UTM)")
-        plt.ylabel("Northing (UTM)")
-        plt.xlim([705800, 707800])
-        plt.ylim([5597200, 5601000])
-        plt.legend(loc='lower right')
+        with pplt.rc.context(fontfamily='sans-serif'):
+            _, ax = pplt.subplots(figsize=[4.33, 5])
+            ax.plot(
+                *railway.T[:2],
+                c='w',
+                label="Railway",
+            )
+            ax.scatter(
+                *geophones.T[:2],
+                s=.5,
+                c='orange',
+                label="Geophones",
+            )
+            extent = [*plt.xlim()[::-1], *plt.ylim()]
+            ax.imshow(satellite, zorder=-1, extent=extent)
+            ax.set_aspect('equal')
+            for ticks in [plt.xticks, plt.yticks]:
+                loc, _ = ticks()
+                ticks(loc[1::2].astype(int))
+            ax.format(
+                xlabel="Easting (UTM)",
+                ylabel="Northing (UTM)",
+                xlim=[705800, 707800],
+                ylim=[5597200, 5601000],
+                xformatter='{x:d}',
+                yformatter='{x:d}',
+            )
+            ax.legend(loc='lower right', ncol=1)
 
 
 catalog.register(Location)
