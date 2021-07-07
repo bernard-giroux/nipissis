@@ -85,8 +85,8 @@ class Figure(Figure):
 
     @property
     def filename(self):
-        return underscore(type(self).__name__) + '.pdf'
-        # return catalog.index(self)
+        # return underscore(type(self).__name__) + '.pdf'
+        return f"Figure_{catalog.index(self)+1}.pdf"
 
     @property
     def filepath(self):

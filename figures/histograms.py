@@ -286,7 +286,7 @@ class HistogramAmplitudes(Figure):
     Metadata = Histograms
 
     def plot(self, data):
-        plt.rcParams["font.family"] = "serif"
+        # plt.rcParams["font.family"] = "serif"
         max_rms_amplitudes = data["max_rms"]
         # Maximum 24-channel mean RMS amplitude (mm/s).
         # Mean over 8 minutes.
@@ -306,7 +306,7 @@ class HistogramTimes(Figure):
     Metadata = Histograms
 
     def plot(self, data):
-        plt.rcParams["font.family"] = "serif"
+        # plt.rcParams["font.family"] = "serif"
         fwhm_time = data["fwhm"]
         fwhm_temp = np.sort(fwhm_time)[:-1]
         print("PASSAGE TIME STATISTICS")
@@ -333,5 +333,3 @@ class HistogramTimes(Figure):
 
 
 catalog.register(SampleData)
-catalog.register(HistogramAmplitudes)
-catalog.register(HistogramTimes)

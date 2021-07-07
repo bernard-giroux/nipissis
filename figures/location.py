@@ -121,34 +121,33 @@ class Location(Figure):
         for start, end in [[0, 24], [24, 48], [48, 72]]:
             print(np.mean(distances[start:end]))
 
-        with pplt.rc.context(fontfamily='sans-serif'):
-            _, ax = pplt.subplots(figsize=[3.33, 5])
-            ax.plot(
-                *railway.T[:2],
-                c='w',
-                label="Railway",
-            )
-            ax.scatter(
-                *geophones.T[:2],
-                s=.5,
-                c='orange',
-                label="Geophones",
-            )
-            extent = [*plt.xlim()[::-1], *plt.ylim()]
-            ax.imshow(satellite, zorder=-1, extent=extent)
-            ax.set_aspect('equal')
-            for ticks in [plt.xticks, plt.yticks]:
-                loc, _ = ticks()
-                ticks(loc[1::2].astype(int))
-            ax.format(
-                xlabel="Easting (UTM)",
-                ylabel="Northing (UTM)",
-                xlim=[705800, 707800],
-                ylim=[5597200, 5601000],
-                xformatter='{x:d}',
-                yformatter='{x:d}',
-            )
-            ax.legend(loc='lower right', ncol=1)
+        _, ax = pplt.subplots(figsize=[3.33, 5])
+        ax.plot(
+            *railway.T[:2],
+            c='w',
+            label="Railway",
+        )
+        ax.scatter(
+            *geophones.T[:2],
+            s=.5,
+            c='orange',
+            label="Geophones",
+        )
+        extent = [*plt.xlim()[::-1], *plt.ylim()]
+        ax.imshow(satellite, zorder=-1, extent=extent)
+        ax.set_aspect('equal')
+        for ticks in [plt.xticks, plt.yticks]:
+            loc, _ = ticks()
+            ticks(loc[1::2].astype(int))
+        ax.format(
+            xlabel="Easting (UTM)",
+            ylabel="Northing (UTM)",
+            xlim=[705800, 707800],
+            ylim=[5597200, 5601000],
+            xformatter='{x:d}',
+            yformatter='{x:d}',
+        )
+        ax.legend(loc='lower right', ncol=1)
 
 
 catalog.register(Location)
