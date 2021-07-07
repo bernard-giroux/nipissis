@@ -10,6 +10,8 @@ from bayesian_inference import (
 from inputs import Inputs_
 from catalog import catalog, Figure
 
+del catalog[-1]
+
 
 class Dependencies_(Inputs_):
     def generate(self):
