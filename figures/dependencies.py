@@ -55,93 +55,6 @@ class Dependencies_(Inputs_):
         self["probs_mar"] = probs_mar
 
 
-# class DistanceDependency(Figure):
-#     Metadata = Dependencies
-#
-#     def plot(self, data):
-#         rms = data["RMS"]
-#         distance = data["Distance"]
-#         velocity = data["MPH"]
-#         poids = data["Poids"]
-#         a1, a2, a3, b, std = data["vars_max"]
-#         plot_linear_dependency(
-#             distance,
-#             rms-a2*velocity-a3*poids,
-#             a=a1,
-#             b=b,
-#             std=std,
-#             xlabel="Distance to railroad $d$ [m]",
-#             ylabel="Contribution of distance to RMS amplitude \n"
-#                    "$y-\\beta_v v-\\beta_w w$ [mm/s]",
-#         )
-#
-#
-# class VelocityDependency(Figure):
-#     Metadata = Dependencies
-#
-#     def plot(self, data):
-#         rms = data["RMS"]
-#         distance = data["Distance"]
-#         velocity = data["MPH"]
-#         poids = data["Poids"]
-#         a1, a2, a3, b, std = data["vars_max"]
-#         plot_linear_dependency(
-#             velocity,
-#             rms-a1*distance-a3*poids,
-#             a=a2,
-#             b=b,
-#             std=std,
-#             xlabel=r"Train velocity $v$ [mph]",
-#             ylabel="Contribution of velocity to RMS amplitude \n"
-#                    "$y-\\beta_d d-\\beta_w w$ [mm/s]",
-#         )
-#
-#
-# class WeightDependency(Figure):
-#     Metadata = Dependencies
-#
-#     def plot(self, data):
-#         rms = data["RMS"]
-#         distance = data["Distance"]
-#         velocity = data["MPH"]
-#         poids = data["Poids"]
-#         a1, a2, a3, b, std = data["vars_max"]
-#         plot_linear_dependency(
-#             poids,
-#             rms-a1*distance-a2*velocity,
-#             a=a3,
-#             b=b,
-#             std=std,
-#             xlabel="Train weight $w$ [tonnes]",
-#             ylabel="Contribution of weight to RMS amplitude \n"
-#                    "$y-\\beta_d d-\\beta_v v$ [mm/s]",
-#         )
-#
-#
-# class Parameters(Figure):
-#     Metadata = Dependencies
-#
-#     def plot(self, data):
-#         vars = data["vars"]
-#         var_names = [
-#             r"$\beta_d$", r"$\beta_v$", r"$\beta_w$", r"$y_0$",
-#             r"$\sigma_\epsilon$",
-#         ]
-#         probs_mar = data["probs_mar"]
-#         plot_parameters(
-#             vars,
-#             var_names,
-#             probs_mar,
-#             units=[
-#                 "\\frac{mm}{s \\cdot m}",
-#                 "\\frac{mm}{m}",
-#                 "\\frac{mm}{s \\cdot tons}",
-#                 "\\frac{mm}{s}",
-#                 "\\frac{mm}{s}",
-#             ],
-#         )
-
-
 class Dependencies(Figure):
     Metadata = Dependencies_
 
@@ -161,7 +74,9 @@ class Dependencies(Figure):
         )
         axs.format(
             grid=True,
+            gridcolor=[.3] * 3,
             gridminor=True,
+            gridminorcolor=[.1] * 3,
         )
 
         rms = data["RMS"]
@@ -228,14 +143,19 @@ class Dependencies(Figure):
             ylabel=(
                 "Normalized marginal probability "
                 "$\\frac{p(\\theta)}{p_{max}(\\theta)}$"
-            )
+            ),
         )
+        axs[3:].format(ylim=[0, 1], xmargin=.05)
 
-        # axs[-1].get_xaxis().set_ticklabels([])
-        axs[-1].set_xscale('log')
-        # axs[-1].set_xticks([2E1, 6E1], [2E1, 6E1])
+        axs[-5].format(xticks=[0, -.15])
+        axs[-4].format(xticks=[0, 4])
+        axs[-3].format(xticks=[0, .004])
+        axs[-2].format(xticks=[0, 100])
+        axs[-1].format(xscale='log', xticks=[2E1, 5E1])
 
         ticks = axs[2].get_xticks()
+        axs[2].set_xticks(ticks[1::2])
+
         axs[2].set_xticks(ticks[1::2])
 
         axs[:4].format(abc=True)
