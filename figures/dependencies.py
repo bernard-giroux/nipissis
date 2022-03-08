@@ -35,19 +35,19 @@ class Dependencies_(Inputs_):
             vars, [distance, velocity, poids, np.ones_like(rms)], rms,
         )
         print(posterior.sum())
-        _, prob_max, _, vars_max, probs_mar, _, prob_null = get_stats(
+        _, _, vars_max, probs_mar, _, prob_null = get_stats(
             posterior, vars, null_dims=[1, 2],
         )
-        print("Against H0:", prob_max / prob_null)
+        print("Against H0:", 1/prob_null)
         print("Most probable model:", vars_max)
-        _, _, _, _, _, _, prob_velocity = get_stats(
+        _, _, _, _, _, prob_velocity = get_stats(
             posterior, vars, null_dims=[1],
         )
-        print("Against H0 for velocity:", prob_velocity / prob_null)
-        _, _, _, _, _, _, prob_weights = get_stats(
+        print("Against H0 for velocity:", 1/prob_velocity)
+        _, _, _, _, _, prob_weight = get_stats(
             posterior, vars, null_dims=[2],
         )
-        print("Against H0 for weight:", prob_weights / prob_null)
+        print("Against H0 for weight:", 1/prob_weight)
 
         self["vars"] = vars
         self["posterior"] = posterior

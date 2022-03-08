@@ -47,7 +47,6 @@ def get_posterior(vars, xs, y):
 def get_stats(posterior, vars, null_dims, print_=True):
     # Maximum posterior probability
     argmax = np.argmax(posterior)
-    prob_max = posterior.flatten()[argmax]
 
     # Mean and std of each parameter's marginal distribution at prob_max
     unravel_argmax = list(np.unravel_index(argmax, posterior.shape))
@@ -60,7 +59,6 @@ def get_stats(posterior, vars, null_dims, print_=True):
 
     return (
         argmax,
-        prob_max,
         unravel_argmax,
         vars_max,
         probs_mar,
@@ -70,11 +68,14 @@ def get_stats(posterior, vars, null_dims, print_=True):
 
 
 def get_prob_null(posterior, vars, null_dims):
+    is_null = np.ones_like(posterior, dtype=bool)
     for dim in sorted(null_dims)[::-1]:
-        posterior = np.moveaxis(posterior, dim, -1)
-        idx_null = np.argmin(np.abs(vars[dim]))
-        posterior = posterior[..., idx_null]
-    return posterior.max()
+        is_null = np.swapaxes(is_null, dim, -1)
+        idx_null = np.min(np.abs(vars[dim]))
+        is_null_current = np.arange(is_null.shape[-1]) == idx_null
+        is_null[..., ~is_null_current] = False
+        is_null = np.swapaxes(is_null, -1, dim)
+    return posterior[is_null].sum() / posterior[~is_null].sum()
 
 
 def weighted_std(values, weights):
