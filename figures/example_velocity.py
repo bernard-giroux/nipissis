@@ -24,7 +24,6 @@ class ExampleVelocities(Figure):
 
         rms = data['rms']
         prob = data['prob_rms']
-        prob = np.sum(prob, axis=tuple(range(2, prob.ndim)))
         idx_threshold = np.argmax(rms > THRESHOLD)
         prob = np.sum(prob[idx_threshold:], axis=0)
         velocity = self.Metadata.V

@@ -37,8 +37,9 @@ class ExampleProbabilities_(Dependencies_):
         prob = gaussian(x=rms, mean=mean, std=noise)
         posterior = self["posterior"]
         prob *= posterior
-        axes = (0, *range(self.X.ndim, prob.ndim))
-        prob /= np.sum(prob, axis=axes, keepdims=True)
+        axes = tuple(range(self.X.ndim, prob.ndim))
+        prob = np.sum(prob, axis=axes)
+        prob /= np.sum(prob, axis=0, keepdims=True)
 
         self['prob_rms'] = prob
 
@@ -49,7 +50,6 @@ class ExampleProbabilities(Figure):
     def plot(self, data):
         rms = data['rms']
         prob = data['prob_rms']
-        prob = np.sum(prob, axis=tuple(range(1, prob.ndim)))
         prob = np.cumsum(prob[::-1])[::-1]
 
         _, ax = pplt.subplots(figsize=[3.33, 3.33])
