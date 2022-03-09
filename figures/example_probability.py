@@ -29,16 +29,17 @@ class ExampleProbabilities_(Dependencies_):
             mean = np.einsum('i,i...', self.X, vars[:-1])
         else:
             mean = np.einsum('ij,i...->j...', self.X, vars[:-1])
-        mean = mean[None]
         noise = vars[-1]
-        noise = noise[None]
         rms = np.expand_dims(rms, tuple(range(1, mean.ndim)))
 
-        prob = gaussian(x=rms, mean=mean, std=noise)
+        prob = []
         posterior = self["posterior"]
-        prob *= posterior
-        axes = tuple(range(self.X.ndim, prob.ndim))
-        prob = np.sum(prob, axis=axes)
+        for rms_ in rms:
+            prob_ = gaussian(x=rms_, mean=mean, std=noise)
+            prob_ *= posterior
+            axes = tuple(range(self.X.ndim-1, prob_.ndim))
+            prob.append(np.sum(prob_, axis=axes))
+        prob = np.array(prob)
         prob /= np.sum(prob, axis=0, keepdims=True)
 
         self['prob_rms'] = prob
