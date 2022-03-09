@@ -12,10 +12,11 @@ class ExampleProbabilities_(Dependencies_):
     D = 90
     V = 30
     W = 20000
+    ONES = 1
 
     @property
     def X(self):
-        return np.array([self.D, self.V, self.W, 1])
+        return np.array([self.D, self.V, self.W, self.ONES])
 
     def generate(self):
         super().generate()
@@ -24,14 +25,18 @@ class ExampleProbabilities_(Dependencies_):
 
         vars = np.array(np.meshgrid(*vars, copy=False, indexing='ij'))
 
-        rms = np.expand_dims(rms, tuple(range(1, len(vars)+1)))
-        mean = np.einsum('i,i...', self.X, vars[:-1])
+        if self.X.ndim == 1:
+            mean = np.einsum('i,i...', self.X, vars[:-1])
+        else:
+            mean = np.einsum('ij,i...->j...', self.X, vars[:-1])
         mean = mean[None]
         noise = vars[-1]
         noise = noise[None]
+        rms = np.expand_dims(rms, tuple(range(1, mean.ndim)))
 
         prob = gaussian(x=rms, mean=mean, std=noise)
-        prob /= np.sum(prob)
+        axes = (0, *range(self.X.ndim, prob.ndim))
+        prob /= np.sum(prob, axis=axes, keepdims=True)
 
         self['prob_rms'] = prob
 
@@ -44,7 +49,6 @@ class ExampleProbabilities(Figure):
         prob = data['prob_rms']
         prob = np.sum(prob, axis=tuple(range(1, prob.ndim)))
         prob = np.cumsum(prob[::-1])[::-1]
-        self['prob_rms'] = prob
 
         _, ax = pplt.subplots(figsize=[3.33, 3.33])
 

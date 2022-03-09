@@ -5,3 +5,4 @@ from . import histograms
 from . import inputs
 from . import dependencies
 from . import example_probability
+from . import example_velocity
