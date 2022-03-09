@@ -21,7 +21,7 @@ class ExampleProbabilities_(Dependencies_):
     def generate(self):
         super().generate()
         vars = self["vars"]
-        self['rms'] = rms = np.linspace(0, 400, 48)
+        self['rms'] = rms = np.linspace(0, 350, 48)
 
         vars = np.array(np.meshgrid(*vars, copy=False, indexing='ij'))
 
@@ -35,6 +35,8 @@ class ExampleProbabilities_(Dependencies_):
         rms = np.expand_dims(rms, tuple(range(1, mean.ndim)))
 
         prob = gaussian(x=rms, mean=mean, std=noise)
+        posterior = self["posterior"]
+        prob *= posterior
         axes = (0, *range(self.X.ndim, prob.ndim))
         prob /= np.sum(prob, axis=axes, keepdims=True)
 
