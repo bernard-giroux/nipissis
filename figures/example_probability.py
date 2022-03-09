@@ -52,12 +52,12 @@ class ExampleProbabilities(Figure):
 
         _, ax = pplt.subplots(figsize=[3.33, 3.33])
 
-        ax.plot(rms, prob, c='k')
+        ax.plot(rms, prob*100, c='k')
         ax.format(
             xlabel="Amplitude threshold $y_t$ (mm/s)",
-            ylabel="Probability $p(y > y_t | \\bar{x})$ (―)",
+            ylabel="Probability $p(y > y_t | \\bar{x}, D)$ (%)",
             xlim=[0, rms.max()],
-            ylim=[0, 1],
+            ylim=[0, 100],
         )
 
 

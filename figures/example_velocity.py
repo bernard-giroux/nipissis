@@ -31,12 +31,12 @@ class ExampleVelocities(Figure):
 
         _, ax = pplt.subplots(figsize=[3.33, 3.33])
 
-        ax.plot(velocity, prob, c='k')
+        ax.plot(velocity, prob*100, c='k')
         ax.format(
             xlabel="Velocity $v$ (mph)",
-            ylabel="Probability $p(y > y_t | \\bar{x})$ (―)",
+            ylabel="Probability $p(y > y_t | \\bar{x}, D)$ (%)",
             xlim=[velocity.min(), velocity.max()],
-            ylim=[0, 1],
+            ylim=[0, 100],
         )
 
 
