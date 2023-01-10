@@ -17,18 +17,18 @@ class Dependencies_(Inputs_):
     def generate(self):
         super().generate()
 
-        rms = self["RMS"]
+        rms = self["Amplitude"]
         distance = self["Distance"]
-        velocity = self["MPH"]
+        velocity = self["Vitesse"]
         poids = self["Poids"]
 
         STEPS = 24  # NOTE Reduce step size to make computations faster.
 
         distance_dep = np.linspace(0.0, -.25, STEPS)
-        velocity_dep = np.linspace(0.0, 5., STEPS)
-        poids_dep = np.linspace(.0, .005, STEPS)
+        velocity_dep = np.linspace(0.0, 4.5, STEPS)
+        poids_dep = np.linspace(.0, 6E-6, STEPS)
         rms_0 = np.linspace(-40, 120, STEPS)
-        rms_noise = np.logspace(1.2, 1.7, STEPS)
+        rms_noise = np.logspace(1.3, 1.8, STEPS)
         vars = [distance_dep, velocity_dep, poids_dep, rms_0, rms_noise]
 
         posterior = get_posterior(
@@ -67,19 +67,19 @@ class Dependencies(Figure):
             ],
             ref=1,
             wratios=(1, *[1/QTY_VARS]*QTY_VARS),
-            wspace=(None, *[0]*(QTY_VARS-1)),
+            wspace=(None, *[.05]*(QTY_VARS-1)),
             figsize=[7.66, 7.66],
             sharey=False,
             sharex=False,
         )
 
-        rms = data["RMS"]
+        rms = data["Amplitude"]
         distance = data["Distance"]
-        velocity = data["MPH"]
+        velocity = data["Vitesse"]
         weight = data["Poids"]
         a1, a2, a3, b, std = data["vars_max"]
 
-        xs = [data["Distance"], data["MPH"], data["Poids"]]
+        xs = [data["Distance"], data["Vitesse"], data["Poids"]]
         ys = [
             rms-a2*velocity-a3*weight,
             rms-a1*distance-a3*weight,
@@ -88,8 +88,8 @@ class Dependencies(Figure):
         as_ = [a1, a2, a3]
         xlabels = [
             "Distance to railroad $d$ (m)",
-            "Train velocity $v$ (mph)",
-            "Train weight $w$ (tons)",
+            "Train velocity $v$ (km/h)",
+            "Train weight $w$ (kg)",
         ]
         ylabels = [
             "Contribution of distance to RMS amplitude \n"
@@ -127,8 +127,9 @@ class Dependencies(Figure):
             axes=axs[3:],
             units=[
                 r"\frac{\mathrm{mm}}{\mathrm{s} \cdot \mathrm{m}}",
-                r"\frac{\mathrm{mm}}{\mathrm{m}}",
-                r"\frac{\mathrm{mm}}{\mathrm{s} \cdot \mathrm{tons}}",
+                r"\frac{\mathrm{mm} \cdot \mathrm{h}}"
+                r"{\mathrm{s} \cdot \mathrm{km}}",
+                r"\frac{\mathrm{mm}}{\mathrm{s} \cdot \mathrm{kg}}",
                 r"\frac{\mathrm{mm}}{\mathrm{s}}",
                 r"\frac{\mathrm{mm}}{\mathrm{s}}",
             ],
@@ -139,18 +140,19 @@ class Dependencies(Figure):
                 "$\\frac{p(\\theta)}{p_{max}(\\theta)}$"
             ),
         )
-        axs[3:].format(ylim=[0, 1], xmargin=.05)
+        axs[3:].format(ylim=[0, 1], xmargin=.1)
+        for ax in axs[3:]:
+            ax.xaxis.label.set_fontsize(8)
 
         axs[-5].format(xticks=[0, -.15])
-        axs[-4].format(xticks=[0, 4])
-        axs[-3].format(xticks=[0, .004])
-        axs[-2].format(xticks=[0, 100])
-        axs[-1].format(xscale='log', xticks=[2E1, 5E1])
+        axs[-4].format(xticks=[0, 3])
+        axs[-3].format(xticks=[0, 4E-6], xformatter='sci')
+        axs[-2].format(xticks=[0, 80])
+        axs[-1].format(xscale='log', xticks=[3E1, 5E1])
 
         ticks = axs[2].get_xticks()
         axs[2].set_xticks(ticks[1::2])
-
-        axs[2].set_xticks(ticks[1::2])
+        axs[2].format(xformatter='sci')
 
         axs[:4].format(abc=True)
 

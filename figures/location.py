@@ -11,6 +11,23 @@ import proplot as pplt
 
 from catalog import catalog, Metadata, Figure
 
+RIVER = np.array(
+    [
+        [
+            6, 8, 9.1, 9.8, 10.1, 10.3, 10.4, 10.5, 10.8, 11.3, 12,
+            13.8, 15.7, 16, 16.3, 16.6, 16.8, 17.4, 18.5, 19.5, 20.2, 20.8,
+            21.1, 21.5, 22.1, 21.7, 18.5, 18, 18.5, 19, 20.3, 21, 21.2,
+            21, 20.5, 19.2, 27.5, 28.2, 29, 29.5,
+        ],
+        np.arange(22, 62, 1),
+    ]
+)
+RIVER = np.insert(RIVER, -4, [20, 58], axis=1)
+RIVER = np.insert(RIVER, -4, [26.5, 57.5], axis=1)
+RIVER = np.insert(RIVER, 26, [21.5, 47.5], axis=1)
+RIVER += [[7050], [55950]]
+RIVER *= 100
+
 
 class Location_(Metadata):
     def generate(self):
@@ -21,18 +38,11 @@ class Location_(Metadata):
         geophones = np.concatenate(
             [coord for key, coord in coords.items() if 'G' in key]
         )
-        hydrophones = np.concatenate(
-            [coord for key, coord in coords.items() if 'H' in key]
-        )
-        distances = closest_distances(
-            np.concatenate([geophones, hydrophones]),
-            railway,
-        )
+        distances = closest_distances(geophones, railway)
         satellite = plt.imread(join(catalog.dir, "satellite.png"))
 
         self["railway"] = railway
         self["geophones"] = geophones
-        self["hydrophones"] = hydrophones
         self["distances"] = distances
         self["satellite"] = satellite
 
@@ -54,7 +64,8 @@ def get_raw_coordinates():
             coord = ls.find(prefix + 'coordinates')
             tmp = coord.text.replace('\n', '').replace('\t', '')
             tmp = tmp.split(' ')
-            tmp.remove('')
+            if '' in tmp:
+                tmp.remove('')
 
             coords[name.text] = np.empty([len(tmp), 3])
             for i, t in enumerate(tmp):
@@ -111,7 +122,7 @@ def closest_distances(points, lines):
 class Location(Figure):
     Metadata = Location_
 
-    def plot(self, data):
+    def plot(self, data, show_river=False):
         railway = data["railway"]
         geophones = data["geophones"]
         distances = data["distances"]
@@ -127,14 +138,23 @@ class Location(Figure):
             c='w',
             label="Railway",
         )
+        if show_river:
+            ax.plot(
+                *RIVER,
+                c='cyan',
+                label="River",
+                zorder=100,
+            )
         ax.scatter(
             *geophones.T[:2],
             s=.5,
             c='orange',
             label="Geophones",
         )
-        extent = [*plt.xlim()[::-1], *plt.ylim()]
-        ax.imshow(satellite, zorder=-1, extent=extent)
+        satellite = satellite[10:-50, 38:-24]
+        xlim = [705800, 708000]
+        ylim = [5597200, 5601100]
+        ax.imshow(satellite, zorder=-1, extent=[*xlim, *ylim])
         ax.set_aspect('equal')
         for ticks in [plt.xticks, plt.yticks]:
             loc, _ = ticks()
@@ -142,8 +162,8 @@ class Location(Figure):
         ax.format(
             xlabel="Easting (UTM)",
             ylabel="Northing (UTM)",
-            xlim=[705800, 707800],
-            ylim=[5597200, 5601000],
+            xlim=xlim,
+            ylim=ylim,
             xformatter='{x:d}',
             yformatter='{x:d}',
         )

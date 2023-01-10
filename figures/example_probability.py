@@ -10,8 +10,8 @@ from catalog import catalog, Figure
 
 class ExampleProbabilities_(Dependencies_):
     D = 90
-    V = 30
-    W = 20000
+    V = 50
+    W = 20000*1000
     ONES = 1
 
     @property
@@ -19,7 +19,7 @@ class ExampleProbabilities_(Dependencies_):
         return np.array([self.D, self.V, self.W, self.ONES])
 
     def generate(self):
-        super().generate()
+        super().__init__()
         vars = self["vars"]
         self['rms'] = rms = np.linspace(0, 350, 48)
 
@@ -34,7 +34,8 @@ class ExampleProbabilities_(Dependencies_):
 
         prob = []
         posterior = self["posterior"]
-        for rms_ in rms:
+        for i, rms_ in enumerate(rms):
+            print(f"Processing data point {i+1} of {len(rms)}.")
             prob_ = gaussian(x=rms_, mean=mean, std=noise)
             prob_ *= posterior
             axes = tuple(range(self.X.ndim-1, prob_.ndim))

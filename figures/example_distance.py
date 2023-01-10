@@ -9,8 +9,8 @@ from catalog import catalog, Figure
 
 class ExampleDistance_(ExampleProbabilities_):
     D = np.linspace(0, 1000, 24)
-    V = np.full_like(D, 40)
-    W = np.full_like(D, 32000)
+    V = np.full_like(D, 50)
+    W = np.full_like(D, 20000*1000)
     ONES = np.full_like(D, 1)
 
 
@@ -18,7 +18,7 @@ class ExampleDistance(Figure):
     Metadata = ExampleDistance_
 
     def plot(self, data):
-        THRESHOLD = 250
+        THRESHOLD = 64
 
         rms = data['rms']
         prob = data['prob_rms']

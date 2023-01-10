@@ -29,12 +29,14 @@ class Inputs_(Metadata):
         data = data[
             ["No Train", "RMS", "Distance", "Vitesse (mph)", "Poids (Tonnes)"]
         ]
-        data.columns = ["Train", "RMS", "Distance", "MPH", "Poids"]
+        data.columns = ["Train", "Amplitude", "Distance", "Vitesse", "Poids"]
         data.drop(65)
-        data["MPH"] = data["MPH"].str.replace(" mph", "")
-        data["MPH"] = data["MPH"].str.replace(" mi/h", "")
-        data["MPH"] = data["MPH"].astype(float)
-        data = data[~pd.isna(data["MPH"])]
+        data["Poids"] *= 1000
+        data["Vitesse"] = data["Vitesse"].str.replace(" mph", "")
+        data["Vitesse"] = data["Vitesse"].str.replace(" mi/h", "")
+        data["Vitesse"] = data["Vitesse"].astype(float)
+        data["Vitesse"] = data["Vitesse"] * 1.609344
+        data = data[~pd.isna(data["Vitesse"])]
 
         # with pd.option_context(
         #     'display.max_rows', None, 'display.max_columns', None,
@@ -58,17 +60,18 @@ class Inputs(Figure):
         axs.format(ylabel=r"RMS amplitude ($\frac{\mathrm{mm}}{\mathrm{s}}$)")
         labels = [
             "Distance to railroad (m)",
-            "Train velocity (mph)",
-            "Train weight (tons)",
+            "Train velocity (km/h)",
+            "Train weight (kg)",
         ]
-        x = data["RMS"]
+        x = data["Amplitude"]
         for y, label, ax in zip(
-            [data["Distance"], data["MPH"], data["Poids"]], labels, axs,
+            [data["Distance"], data["Vitesse"], data["Poids"]], labels, axs,
         ):
             ax.scatter(y, x, color="k", size=12)
             ax.format(abc=True, xlabel=label, ylim=[0, None])
         ticks = axs[2].get_xticks()
         axs[2].set_xticks(ticks[1::2])
+        axs[2].format(xformatter='sci')
 
 
 catalog.register(Inputs)
