@@ -224,7 +224,7 @@ class SampleData(Figure):
     Metadata = Histograms
 
     def plot(self, data):
-        locator = mdates.AutoDateLocator(minticks=1, maxticks=10)
+        locator = mdates.MinuteLocator(byminute=range(0, 60, 2))
         formatter = mdates.ConciseDateFormatter(locator)
 
         rms_val = data["rms_0"]
@@ -256,7 +256,7 @@ class SampleData(Figure):
             ls='--',
             c='k',
         )
-        plt.text(time.min(), y_max, "Maximum", ha='left', va='bottom')
+        plt.text(time.min(), y_max, "Maximum", ha='left', va='top')
         DIFF_IDX = 20
         x = time[DIFF_IDX:DIFF_IDX+1].mean()
         y = to_plot_rms[DIFF_IDX:DIFF_IDX+1].mean()

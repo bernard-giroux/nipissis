@@ -15,7 +15,7 @@ plt.rcParams['font.style'] = "normal"
 plt.rcParams['font.variant'] = "normal"
 plt.rcParams['font.weight'] = "medium"
 plt.rcParams['font.stretch'] = "normal"
-plt.rcParams['font.size'] = 8
+plt.rcParams['font.size'] = 10
 # plt.rcParams['font.serif'] = (
 #     DejaVu Serif, Bitstream Vera Serif, New Century Schoolbook,
 #     Century Schoolbook L, Utopia, ITC Bookman, Bookman, Nimbus Roman No9 L,
@@ -95,7 +95,7 @@ plt.rcParams['ytick.minor.visible'] = True
 # plt.rcParams['legend.loc'] = "best"
 # plt.rcParams['legend.frameon'] = True  # draw the legend on a background patch
 # plt.rcParams['legend.framealpha'] = 0.8  # legend patch transparency
-# plt.rcParams['legend.facecolor'] = "inherit"  # inherit `axes.facecolor`; color
+plt.rcParams['legend.facecolor'] = [1, 1, 1, 0]  # inherit `axes.facecolor`; color
 # plt.rcParams['legend.edgecolor'] = "k"  # background patch boundary color
 # plt.rcParams['legend.fancybox'] = True  # use a rounded box for the
 # plt.rcParams['legend.shadow'] = False  # give background a shadow effect
